@@ -31,8 +31,8 @@ learning_rate = 0.001
 gamma         = 0.98
 buffer_limit  = 5000
 batch_size    = 32
-max_episodes  = 2000
-t_max         = 2000
+max_episodes  = 20000
+t_max         = 10000
 min_buffer    = 1000
 target_update = 20 # episode(s)
 train_steps   = 10
@@ -158,7 +158,7 @@ def train(model_class, env):
 
         # Train the model if memory is sufficient
         if len(memory) > min_buffer:
-            if np.mean(rewards[print_interval:]) < 0:
+            if np.mean(rewards[print_interval:]) < 0.1:
                 print('Bad initialization. Please restart the training.')
                 exit()
             for i in range(train_steps):
