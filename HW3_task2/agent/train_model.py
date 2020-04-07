@@ -139,9 +139,7 @@ def train(model_class, env):
         epsilon = compute_epsilon(episode)
         state = env.reset()
         episode_rewards = 0.0
-        print("train : step 2 ");
         for t in range(t_max):
-            print("train : step 3 ");
             # Model takes action
             action = dqnagent.act(model, device, state, epsilon)
 
