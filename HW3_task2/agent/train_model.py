@@ -147,7 +147,7 @@ def train(model_class, env):
             next_state, reward, done, info = env.step(action)
 
             # Save transition to replay buffer
-            memory.push(Transition(state, [action], [reward], next_state, [done]))
+            memory.push(replay_buffer.Transition(state, [action], [reward], next_state, [done]))
 
             state = next_state
             episode_rewards += reward

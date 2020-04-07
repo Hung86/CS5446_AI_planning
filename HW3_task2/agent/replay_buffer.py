@@ -2,6 +2,7 @@ import torch
 import collections
 
 buffer_limit  = 5000
+Transition = collections.namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
 
 class ReplayBuffer():
     def __init__(self, buffer_limit=buffer_limit):
