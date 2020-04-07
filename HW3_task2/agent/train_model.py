@@ -178,7 +178,7 @@ def train(model_class, env):
 
 if __name__ == '__main__':
     env = dqn_env.construct_task2_env();
-    model = train(models.ConvDQN, env)
+    model = train(models.AtariDQN, env)
     save_model(model)
     test(model, env, max_episodes=600)
 
