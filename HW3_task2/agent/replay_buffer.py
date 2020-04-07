@@ -1,6 +1,7 @@
 import torch
 import collections
 
+buffer_limit  = 5000
 
 class ReplayBuffer():
     def __init__(self, buffer_limit=buffer_limit):
