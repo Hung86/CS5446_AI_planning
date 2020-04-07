@@ -113,6 +113,7 @@ class Base(nn.Module):
     def __init__(self, input_shape, num_actions):
         super().__init__()
         self.input_shape = input_shape
+        print("input_shape : ", input_shape)
         self.num_actions = num_actions
         self.construct()
 
