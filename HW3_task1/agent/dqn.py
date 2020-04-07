@@ -271,7 +271,8 @@ def train(model_class, env):
 
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
-            print("train : reward : " + reward)
+            if reward != 0:
+                print("train : reward : ",  reward)
             # Save transition to replay buffer
             memory.push(Transition(state, [action], [reward], next_state, [done]))
 
@@ -279,6 +280,7 @@ def train(model_class, env):
             episode_rewards += reward
             if done:
                 break
+        print("train : episode_rewards : ", episode_rewards)
         rewards.append(episode_rewards)
         
         # Train the model if memory is sufficient
