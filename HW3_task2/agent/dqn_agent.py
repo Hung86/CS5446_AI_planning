@@ -3,7 +3,7 @@ import torch
 
 
 class DQNAgent():
-    def act(self, model, state, epsilon=0.0):
+    def act(self, model,device, state, epsilon=0.0):
         if not isinstance(state, torch.FloatTensor):
             state = torch.from_numpy(state).float().unsqueeze(0).to(device)
         '''

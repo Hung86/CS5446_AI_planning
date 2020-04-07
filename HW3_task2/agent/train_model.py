@@ -141,7 +141,7 @@ def train(model_class, env):
 
         for t in range(t_max):
             # Model takes action
-            action = dqnagent.act(model, state, epsilon)
+            action = dqnagent.act(model, device, state, epsilon)
 
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
