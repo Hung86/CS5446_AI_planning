@@ -38,7 +38,7 @@ target_update = 20 # episode(s)
 train_steps   = 50
 max_epsilon   = 1.0
 min_epsilon   = 0.001
-epsilon_decay = 500
+epsilon_decay = 100
 print_interval= 20
 
 
