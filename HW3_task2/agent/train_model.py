@@ -1,5 +1,7 @@
-import models
-import dqn_evn
+from .models import *
+from .dqn_agent import *
+from .replay_buffer import *
+from .dqn_env import *
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
