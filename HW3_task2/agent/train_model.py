@@ -97,6 +97,15 @@ def compute_epsilon(episode):
     epsilon = min_epsilon + (max_epsilon - min_epsilon) * math.exp(-1. * episode / epsilon_decay)
     return epsilon
 
+def get_model():
+    '''
+    Load `model` from disk. Location is specified in `model_path`.
+    '''
+    model_class, model_state_dict, input_shape, num_actions = torch.load(model_path)
+    model = eval(model_class)(input_shape, num_actions).to(device)
+    model.load_state_dict(model_state_dict)
+    return model
+
 def save_model(model):
     '''
     Save `model` to disk. Location is specified in `model_path`.
