@@ -1,4 +1,6 @@
-from . import models
+import models
+import dqn_evn
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 script_path = os.path.dirname(os.path.realpath(__file__))
@@ -154,8 +156,8 @@ def train(model_class, env):
     return model
 
 if __name__ == '__main__':
-    _env = env.construct_task2_env();
-    model = train(models.ConvDQN, _env)
+    env = dqn_env.construct_task2_env();
+    model = train(models.ConvDQN, env)
     save_model(model)
     test(model, env, max_episodes=600)
 
