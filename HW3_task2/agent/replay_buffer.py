@@ -3,7 +3,7 @@ import collections
 import random
 
 
-buffer_limit  = 10000
+buffer_limit  = 100000
 Transition = collections.namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
 
 class ReplayBuffer():
