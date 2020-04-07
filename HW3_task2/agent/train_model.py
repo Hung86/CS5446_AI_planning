@@ -145,8 +145,8 @@ def train(model_class, env):
 
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
-            print("train : action :",action)
-            print("train : reward :", reward)
+            if reward != 0:
+                print("train : reward :", reward)
             # Save transition to replay buffer
             memory.push(replay_buffer.Transition(state, [action], [reward], next_state, [done]))
 
@@ -158,7 +158,7 @@ def train(model_class, env):
 
         # Train the model if memory is sufficient
         if len(memory) > min_buffer:
-            if np.mean(rewards[print_interval:]) < 0.1:
+            if np.mean(rewards[print_interval:]) < 0:
                 print('Bad initialization. Please restart the training.')
                 exit()
             for i in range(train_steps):
