@@ -174,6 +174,21 @@ class ConvDQN(DQN):
         )
         super().construct()
 
+class AtariDQN(DQN):
+    def construct(self):
+        self.features = nn.Sequential(
+            nn.Conv2d(self.input_shape[0], 32, kernel_size=4),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=4),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, kernel_size=3),
+            nn.ReLU()
+        )
+        self.layers = nn.Sequential(
+            nn.Linear(self.feature_size(), 512),
+            nn.ReLU(),
+            nn.Linear(512, self.num_actions)
+        )
 
 def compute_loss(model, target, states, actions, rewards, next_states, dones):
     '''
@@ -375,7 +390,7 @@ if __name__ == '__main__':
     env = get_env()
 
     if args.train:
-        model = train(ConvDQN, env)
+        model = train(AtariDQN, env)
         save_model(model)
     else:
         model = get_model()
