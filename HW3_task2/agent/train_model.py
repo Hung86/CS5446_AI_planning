@@ -30,15 +30,15 @@ model_path = os.path.join(script_path, 'model.pt')
 learning_rate = 0.001
 gamma         = 0.98
 buffer_limit  = 5000
-batch_size    = 50
-max_episodes  = 10000
-t_max         = 100000
-min_buffer    = 10000
+batch_size    = 32
+max_episodes  = 20000
+t_max         = 60000
+min_buffer    = 1000
 target_update = 20 # episode(s)
-train_steps   = 50
+train_steps   = 10
 max_epsilon   = 1.0
-min_epsilon   = 0.001
-epsilon_decay = 100
+min_epsilon   = 0.01
+epsilon_decay = 500
 print_interval= 20
 
 
