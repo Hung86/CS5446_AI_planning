@@ -1,5 +1,7 @@
 import torch
 import collections
+import random
+
 
 buffer_limit  = 5000
 Transition = collections.namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
