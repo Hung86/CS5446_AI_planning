@@ -36,9 +36,9 @@ t_max         = 100000
 min_buffer    = 5000
 target_update = 20 # episode(s)
 train_steps   = 50
-max_epsilon   = 0.8
+max_epsilon   = 1.0
 min_epsilon   = 0.01
-epsilon_decay = 1000
+epsilon_decay = 500
 print_interval= 20
 
 
