@@ -34,7 +34,7 @@ class ReplayBuffer():
         pass
 
 
-    def sample(self, batch_size):
+    def sample(self, batch_size, device):
         '''
         FILL ME : This function should return a set of transitions of size `batch_size` sampled from `self.buffer`
 

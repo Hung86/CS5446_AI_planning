@@ -83,7 +83,7 @@ def optimize(model, target, memory, optimizer):
     '''
     Optimize the model for a sampled batch with a length of `batch_size`
     '''
-    batch = memory.sample(batch_size)
+    batch = memory.sample(batch_size, device)
     loss = compute_loss(model, target, *batch)
     optimizer.zero_grad()
     loss.backward()
