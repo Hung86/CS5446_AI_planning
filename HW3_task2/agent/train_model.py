@@ -177,8 +177,18 @@ def train(model_class, env):
     return model
 
 if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Train and test DQN agent.')
+    parser.add_argument('--train', dest='train', action='store_true', help='train the agent')
+    args = parser.parse_args()
+
     env = dqn_env.construct_task2_env();
-    model = train(models.AtariDQN, env)
-    save_model(model)
+
+    if args.train:
+        model = train(models.AtariDQN, env)
+        save_model(model)
+    else:
+        model = get_model()
     test(model, env, max_episodes=600)
 
