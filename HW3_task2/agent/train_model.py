@@ -36,7 +36,7 @@ t_max         = 100000
 min_buffer    = 5000
 target_update = 20 # episode(s)
 train_steps   = 50
-max_epsilon   = 1.0
+max_epsilon   = 0.8
 min_epsilon   = 0.01
 epsilon_decay = 1000
 print_interval= 20
@@ -158,7 +158,7 @@ def train(model_class, env):
 
         # Train the model if memory is sufficient
         if len(memory) > min_buffer:
-            if np.mean(rewards[print_interval:]) < 0.1:
+            if np.mean(rewards[print_interval:]) < 0:
                 print('Bad initialization. Please restart the training.')
                 exit()
             for i in range(train_steps):
