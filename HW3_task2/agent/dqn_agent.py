@@ -17,7 +17,7 @@ def randomPolicy(state, env):
     reward = 0.
     while not state.isDone():
         action = random.choice(env.actions)
-        state = state.simulateStep(env=env,action=action)
+        state = state.simulateStep(action=action)
         reward += state.getReward()
     return reward
 
@@ -46,7 +46,7 @@ class DQNAgent():
 
 
 class GridWorldState():
-    def __init__(self, state, reward=0, is_done=False):
+    def __init__(self, env, state, reward=0, is_done=False):
         '''
         Data structure to represent state of the environment
         self.env : Environment of gym_grid_environment simulator
@@ -56,19 +56,20 @@ class GridWorldState():
         self.width : Width of lanes in gym_grid_environment
         self.reward : Reward of the state
         '''
+        self.env = deepcopy(env)
         self.state = deepcopy(state)
         self.is_done = is_done  # if is_done else False
         if self.state[1][0][0] > 0:
             self.is_done = True
         self.reward = reward
 
-    def simulateStep(self, env, action):
+    def simulateStep(self, action):
         '''
         Simulates action at self.state and returns the next state
         '''
 
-        state_desc = env.step(state=deepcopy(self.state), action=action)
-        newState = GridWorldState(state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
+        state_desc = elf.env.step(action=action)
+        newState = GridWorldState(env, state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
         return newState
 
     def isDone(self):
@@ -157,7 +158,7 @@ class MonteCarloTreeSearch:
                 actions = self.env.actions
                 for action in actions:
                     if action not in cur_node.children:
-                        childnode = cur_node.state.simulateStep(env=self.env, action=action)
+                        childnode = cur_node.state.simulateStep(action=action)
                         newNode = Node(state=childnode, parent=cur_node)
                         cur_node.children[action] = newNode
                         if len(actions) == len(cur_node.children):
