@@ -58,9 +58,8 @@ class GridWorldState():
         '''
         self.state = deepcopy(state)
         self.is_done = is_done  # if is_done else False
-        if self.state.agent.position.x < 0:
+        if self.state[1][0][0] > 0:
             self.is_done = True
-            self.state.agent.position.x = 0
         self.reward = reward
 
     def simulateStep(self, env, action):
