@@ -133,7 +133,7 @@ def train(model_class, env):
     target.eval()
 
     # Initialize replay buffer
-    memory = replay_buffer.ReplayBuffer()
+    memory = ReplayBuffer()
     #dqnagent = dqn_agent.DQNAgent()
     mcts = MonteCarloTreeSearch(env=env, numiters=numiters, explorationParam=1.,random_seed=RANDOM_SEED)
 
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     env = construct_training_env();
 
     if args.train:
-        model = train(models.AtariDQN, env)
+        model = train(AtariDQN, env)
         save_model(model)
     else:
         model = get_model()
