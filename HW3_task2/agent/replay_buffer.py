@@ -2,9 +2,7 @@ import torch
 import collections
 import random
 
-
-buffer_limit  = 100000
-Transition = collections.namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
+from prototype import *
 
 class ReplayBuffer():
     def __init__(self, buffer_limit=buffer_limit):
