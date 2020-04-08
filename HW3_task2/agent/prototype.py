@@ -13,7 +13,7 @@ target_update = 20 # episode(s)
 train_steps   = 20
 max_epsilon   = 1.0
 min_epsilon   = 0.01
-epsilon_decay = 30000
+epsilon_decay = 20000
 print_interval= 20
 
 Transition = collections.namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
