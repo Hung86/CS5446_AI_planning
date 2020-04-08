@@ -18,7 +18,7 @@ def construct_task2_env():
     return gym.make('GridDriving-v0', **config)
 
 def construct_training_env():
-    config = {'observation_type': 'tensor', 'agent_speed_range': [-3, -1],  'finish_position':Point(0,0), 'seed': 15, 'stochasticity' : 1.,
+    config = {'observation_type': 'tensor', 'agent_speed_range': [-3, -1], 'finish_position':Point(0,0), 'random_seed': 15, 'stochasticity' : 1.,
               'lanes': [LaneSpec(cars=7, speed_range=[-2, -1]),
                         LaneSpec(cars=8, speed_range=[-2, -1]),
                         LaneSpec(cars=6, speed_range=[-1, -1]),
