@@ -2,10 +2,10 @@
 # from .dqn_agent import *
 # from .replay_buffer import *
 # from .dqn_env import *
-import models
-import dqn_agent
-import replay_buffer
-import dqn_env
+from models import *
+from dqn_agent import *
+from replay_buffer import *
+from dqn_env import *
 
 import gym
 import gym_grid_driving
@@ -29,10 +29,10 @@ model_path = os.path.join(script_path, 'model.pt')
 # Hyperparameters --- don't change, RL is very sensitive
 learning_rate = 0.001
 gamma         = 0.98
-buffer_limit  = 5000
+buffer_limit  = 100000
 batch_size    = 32
-max_episodes  = 20000
-t_max         = 60000
+max_episodes  = 2000
+t_max         = 600
 min_buffer    = 1000
 target_update = 20 # episode(s)
 train_steps   = 10
@@ -135,6 +135,7 @@ def train(model_class, env):
     # Initialize replay buffer
     memory = replay_buffer.ReplayBuffer()
     dqnagent = dqn_agent.DQNAgent()
+    mcts = MonteCarloTreeSearch(env=env, numiters=numiters, explorationParam=1.,random_seed=RANDOM_SEED)
 
     print(model)
 
@@ -148,12 +149,18 @@ def train(model_class, env):
         epsilon = compute_epsilon(episode)
         state = env.reset()
         episode_rewards = 0.0
+        mtcs_done = False
         for t in range(t_max):
             # Model takes action
-            action = dqnagent.act(model, device, state, epsilon)
+            mtcs_state = GridWorldState(env.state, is_done=mtcs_done)
+
+            action = mcts.buildTreeAndReturnBestAction(initialState=mtcs_state)
+
+            #action = dqnagent.act(model, device, state, epsilon)
 
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
+            mtcs_done = done
             if reward != 0:
                 print("train : reward :", reward)
             # Save transition to replay buffer
@@ -192,7 +199,7 @@ if __name__ == '__main__':
     parser.add_argument('--train', dest='train', action='store_true', help='train the agent')
     args = parser.parse_args()
 
-    env = dqn_env.construct_task2_env();
+    env = dqn_env.construct_training_env();
 
     if args.train:
         model = train(models.AtariDQN, env)
