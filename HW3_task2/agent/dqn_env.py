@@ -28,7 +28,7 @@ def construct_training_env():
                         LaneSpec(cars=6, speed_range=[-3, -2]),
                         LaneSpec(cars=7, speed_range=[-1, -1]),
                         LaneSpec(cars=6, speed_range=[-2, -1]),
-                        LaneSpec(cars=8, speed_range=[-2, -2])], 'width': 50}
+                        LaneSpec(cars=8, speed_range=[-2, -2])], 'width': 50, 'tensor_state':True, 'flicker_rate':0., 'mask':None}
     return gym.make('GridDriving-v0', **config)
     # LANES = config['lanes']
     # WIDTH = config['width']
