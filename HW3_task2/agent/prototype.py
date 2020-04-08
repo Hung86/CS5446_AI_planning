@@ -2,12 +2,12 @@ import collections
 
 
 # Hyperparameters --- don't change, RL is very sensitive
-learning_rate = 1e-5
+learning_rate = 1e-4
 gamma         = 0.99
 buffer_limit  = 100000
-batch_size    = 100
+batch_size    = 64
 max_episodes  = 100000
-t_max         = 10000
+t_max         = 600
 min_buffer    = 10000
 target_update = 20 # episode(s)
 train_steps   = 20

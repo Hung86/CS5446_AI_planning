@@ -119,13 +119,13 @@ def train(model_class, env):
     rewards = []
     losses = []
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-    print("train : step 1 ");
+    print("train : step 1 , t_max : ", t_max)
 
     for episode in range(max_episodes):
         epsilon = compute_epsilon(episode)
         state = env.reset()
         episode_rewards = 0.0
-        while True:
+        for t in range(t_max):
             # Model takes action
             action = dqnagent.act(model, device, state, epsilon)
 
