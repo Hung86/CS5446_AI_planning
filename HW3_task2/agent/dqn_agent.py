@@ -67,7 +67,7 @@ class GridWorldState():
         Simulates action at self.state and returns the next state
         '''
 
-        state_desc = env.step(action=action, state=deepcopy(self.state))
+        state_desc = env.step(state=deepcopy(self.state), action=action)
         newState = GridWorldState(state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
         return newState
 

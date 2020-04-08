@@ -1,4 +1,6 @@
 import gym
+from gym.utils import seeding
+import gym_grid_driving
 from gym_grid_driving.envs.grid_driving import LaneSpec, MaskSpec, Point
 
 
