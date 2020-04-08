@@ -68,7 +68,7 @@ class GridWorldState():
         Simulates action at self.state and returns the next state
         '''
 
-        state_desc = elf.env.step(action=action)
+        state_desc = self.env.step(action=action)
         newState = GridWorldState(env, state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
         return newState
 
