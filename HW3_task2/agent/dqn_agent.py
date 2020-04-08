@@ -127,7 +127,7 @@ class MonteCarloTreeSearch:
         '''
         Function to build MCTS tree and return best action at initialState
         '''
-        mtcs_state = GridWorldState(initialState, is_done=False)
+        mtcs_state = GridWorldState(self.env, initialState, is_done=False)
         self.root = Node(state=mtcs_state, parent=None)
         for i in range(self.numiters):
             self.addNodeAndBackpropagate()
