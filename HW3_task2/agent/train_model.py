@@ -135,7 +135,7 @@ def train(model_class, env):
     # Initialize replay buffer
     memory = ReplayBuffer()
     #dqnagent = dqn_agent.DQNAgent()
-    mcts = MonteCarloTreeSearch(env=env, numiters=numiters, explorationParam=1.,random_seed=RANDOM_SEED)
+    mcts = MonteCarloTreeSearch(env=env, numiters=100, explorationParam=1.,random_seed=15)
 
     print(model)
 

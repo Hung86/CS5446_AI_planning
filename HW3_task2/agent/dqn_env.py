@@ -18,7 +18,8 @@ def construct_task2_env():
     return gym.make('GridDriving-v0', **config)
 
 def construct_training_env():
-    config = {'lanes': [LaneSpec(cars=7, speed_range=[-2, -1]),
+    config = {'observation_type': 'tensor', 'agent_speed_range': [-3, -1],  'finish_position':Point(0,0), 'seed': 15, 'stochasticity' : 1.,
+              'lanes': [LaneSpec(cars=7, speed_range=[-2, -1]),
                         LaneSpec(cars=8, speed_range=[-2, -1]),
                         LaneSpec(cars=6, speed_range=[-1, -1]),
                         LaneSpec(cars=6, speed_range=[-3, -1]),
@@ -27,12 +28,13 @@ def construct_training_env():
                         LaneSpec(cars=6, speed_range=[-3, -2]),
                         LaneSpec(cars=7, speed_range=[-1, -1]),
                         LaneSpec(cars=6, speed_range=[-2, -1]),
-                        LaneSpec(cars=8, speed_range=[-2, -2])], 'width': 50, 'seed': 15, 'iters': 100}
-    LANES = config['lanes']
-    WIDTH = config['width']
-    RANDOM_SEED = config['seed']
-    numiters = config['iters']
-    stochasticity = 1.
-    env = gym.make('GridDriving-v0', lanes=LANES, width=WIDTH,
-                   agent_speed_range=(-3,-1), finish_position=Point(0,0), #agent_ pos_init=Point(4,2),
-                   stochasticity=stochasticity, tensor_state=True, flicker_rate=0., mask=None, random_seed=RANDOM_SEED)
+                        LaneSpec(cars=8, speed_range=[-2, -2])], 'width': 50}
+    return gym.make('GridDriving-v0', **config)
+    # LANES = config['lanes']
+    # WIDTH = config['width']
+    # RANDOM_SEED = config['seed']
+    # numiters = config['iters']
+    # stochasticity = 1.
+    # env = gym.make('GridDriving-v0', lanes=LANES, width=WIDTH,
+    #                agent_speed_range=(-3,-1), finish_position=Point(0,0), #agent_ pos_init=Point(4,2),
+    #                stochasticity=stochasticity, tensor_state=True, flicker_rate=0., mask=None, random_seed=RANDOM_SEED)
