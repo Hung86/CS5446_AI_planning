@@ -161,7 +161,7 @@ def train(model_class, env):
             if reward != 0:
                 print("train : reward :", reward)
             # Save transition to replay buffer
-            memory.push(replay_buffer.Transition(state, [action], [reward], next_state, [done]))
+            memory.push(Transition(state, [action], [reward], next_state, [done]))
 
             state = next_state
             episode_rewards += reward
