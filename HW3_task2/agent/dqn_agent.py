@@ -66,7 +66,7 @@ class GridWorldState():
         '''
         Simulates action at self.state and returns the next state
         '''
-        state_desc = env.step(state=deepcopy(self.state), action=action)
+        state_desc = env.step(action=action)
         newState = GridWorldState(state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
         return newState
 
@@ -113,7 +113,7 @@ class MonteCarloTreeSearch:
         self.playoutPolicy : Policy followed by agent to simulate rollout from leaf node
         self.root : root node of MCTS tree
         '''
-        self.env = env
+        self.env = deepcopy(env)
         self.numiters = numiters
         self.explorationParam = explorationParam
         self.playoutPolicy = playoutPolicy
@@ -125,7 +125,8 @@ class MonteCarloTreeSearch:
         '''
         Function to build MCTS tree and return best action at initialState
         '''
-        self.root = Node(state=initialState, parent=None)
+        mtcs_state = GridWorldState(initialState, is_done=False)
+        self.root = Node(state=mtcs_state, parent=None)
         for i in range(self.numiters):
             self.addNodeAndBackpropagate()
         bestChild = self.chooseBestActionNode(self.root, 0)

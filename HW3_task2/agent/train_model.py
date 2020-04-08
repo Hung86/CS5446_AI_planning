@@ -135,7 +135,7 @@ def train(model_class, env):
     # Initialize replay buffer
     memory = ReplayBuffer()
     #dqnagent = dqn_agent.DQNAgent()
-    mcts = MonteCarloTreeSearch(env=env, numiters=100, explorationParam=1.,random_seed=15)
+    # mcts = MonteCarloTreeSearch(env=env, numiters=100, explorationParam=1.,random_seed=15)
 
     print(model)
 
@@ -149,18 +149,15 @@ def train(model_class, env):
         epsilon = compute_epsilon(episode)
         state = env.reset()
         episode_rewards = 0.0
-        mtcs_done = False
         for t in range(t_max):
+            mcts = MonteCarloTreeSearch(env=env, numiters=100, explorationParam=1., random_seed=15)
             # Model takes action
-            mtcs_state = GridWorldState(env.state, is_done=mtcs_done)
-
-            action = mcts.buildTreeAndReturnBestAction(initialState=mtcs_state)
+            action = mcts.buildTreeAndReturnBestAction(initialState=state)
 
             #action = dqnagent.act(model, device, state, epsilon)
 
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
-            mtcs_done = done
             if reward != 0:
                 print("train : reward :", reward)
             # Save transition to replay buffer
