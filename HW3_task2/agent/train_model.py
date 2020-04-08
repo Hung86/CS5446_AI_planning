@@ -8,7 +8,9 @@ from replay_buffer import *
 from dqn_env import *
 
 import gym
+from gym.utils import seeding
 import gym_grid_driving
+from gym_grid_driving.envs.grid_driving import LaneSpec, MaskSpec, Point
 import collections
 import numpy as np
 import random
