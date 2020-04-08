@@ -69,7 +69,7 @@ class GridWorldState():
         '''
 
         state_desc = self.env.step(action=action)
-        newState = GridWorldState(env, state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
+        newState = GridWorldState(self.env, state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
         return newState
 
     def isDone(self):
