@@ -133,10 +133,10 @@ def train(model_class, env):
             root_node_state = GridWorldState(state, False)
 
             action = mtcs.buildTreeAndReturnBestAction(initialState=root_node_state)
+            print("train : action :", action)
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
-            if reward != 0:
-                print("train : reward :", reward)
+            print("train : reward :", reward)
             # Save transition to replay buffer
             memory.push(Transition(state, [action], [reward], next_state, [done]))
 
