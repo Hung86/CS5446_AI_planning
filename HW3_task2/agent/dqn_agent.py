@@ -107,7 +107,7 @@ class Node:
 
 
 class MonteCarloTreeSearch:
-    def __init__(self, model, device, dqn_agent, epsilon, env, numiters, explorationParam, playoutPolicy=randomPolicy, random_seed=None):
+    def __init__(self, model, device, dqn_agent, epsilon, env, numiters, explorationParam, random_seed=None, playoutPolicy=randomPolicy):
         '''
         self.numiters : Number of MCTS iterations
         self.explorationParam : exploration constant used in computing value of node
