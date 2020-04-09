@@ -89,14 +89,14 @@ class Node:
 
 
 class MonteCarloTreeSearch:
-    def __init__(self, env, numiters, explorationParam, playoutPolicy=randomPolicy, random_seed=None):
+    def __init__(self, model, numiters, explorationParam, playoutPolicy=randomPolicy, random_seed=None):
         '''
         self.numiters : Number of MCTS iterations
         self.explorationParam : exploration constant used in computing value of node
         self.playoutPolicy : Policy followed by agent to simulate rollout from leaf node
         self.root : root node of MCTS tree
         '''
-        self.env = env
+        self.model = model
         self.numiters = numiters
         self.explorationParam = explorationParam
         self.playoutPolicy = playoutPolicy

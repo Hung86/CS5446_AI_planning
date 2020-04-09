@@ -9,17 +9,7 @@ import math
 
 random = None
 
-def randomPolicy(state, env):
-    '''
-    Policy followed in MCTS simulation for playout
-    '''
-    global random
-    reward = 0.
-    while not state.isDone():
-        action = random.choice(env.actions)
-        state = state.simulateStep(action=action)
-        reward += state.getReward()
-    return reward
+
 
 class DQNAgent():
     def act(self, model,device, state, epsilon=0.0):
@@ -45,8 +35,21 @@ class DQNAgent():
         return output_action
 
 
+def randomPolicy(model, dqn_agent, device, node_state, env, epsilon):
+    '''
+    Policy followed in MCTS simulation for playout
+    '''
+    global random
+    reward = 0.
+    while not node_state.isDone():
+        action = dqnagent.act(model, device, node_state,epsilon)
+        node_state = epsilon.simulateStep(env=env, action=action)
+        reward += node_state.getReward()
+    return reward
+
+
 class GridWorldState():
-    def __init__(self, env, state, reward=0, is_done=False):
+    def __init__(self, state, reward=0, is_done=False):
         '''
         Data structure to represent state of the environment
         self.env : Environment of gym_grid_environment simulator
@@ -56,19 +59,17 @@ class GridWorldState():
         self.width : Width of lanes in gym_grid_environment
         self.reward : Reward of the state
         '''
-        self.env = deepcopy(env)
-        self.state = deepcopy(state)
-        self.is_done = is_done  # if is_done else False
-        if self.state[1][0][0] > 0:
-            self.is_done = True
+        self.state = state
+        self.is_done = is_done  # if is_done else False0
         self.reward = reward
 
-    def simulateStep(self, action):
+    def simulateStep(self, env, action):
         '''
         Simulates action at self.state and returns the next state
         '''
-        state_desc = self.env.step(action=action)
-        newState = GridWorldState(self.env, state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
+        # next_state, reward, done, info = env.step(action)
+        state_desc = env.step(action=action)
+        newState = GridWorldState(state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
         return newState
 
     def isDone(self):
@@ -105,16 +106,18 @@ class Node:
         self.children = {}
 
 
-
 class MonteCarloTreeSearch:
-    def __init__(self, env, numiters, explorationParam, playoutPolicy=randomPolicy, random_seed=None):
+    def __init__(self, model, device, dqn_agent, epsilon, numiters, explorationParam, playoutPolicy=randomPolicy, random_seed=None):
         '''
         self.numiters : Number of MCTS iterations
         self.explorationParam : exploration constant used in computing value of node
         self.playoutPolicy : Policy followed by agent to simulate rollout from leaf node
         self.root : root node of MCTS tree
         '''
-        self.env = deepcopy(env)
+        self.model = model
+        self.device = device
+        self.dqn_agent = dqn_agent
+        self.epsilon = epsilon
         self.numiters = numiters
         self.explorationParam = explorationParam
         self.playoutPolicy = playoutPolicy
@@ -126,8 +129,7 @@ class MonteCarloTreeSearch:
         '''
         Function to build MCTS tree and return best action at initialState
         '''
-        mtcs_state = GridWorldState(self.env, initialState, is_done=False)
-        self.root = Node(state=mtcs_state, parent=None)
+        self.root = Node(state=initialState, parent=None)
         for i in range(self.numiters):
             self.addNodeAndBackpropagate()
         bestChild = self.chooseBestActionNode(self.root, 0)
@@ -140,8 +142,9 @@ class MonteCarloTreeSearch:
         Function to run a single MCTS iteration
         '''
         node = self.addNode()
+        #def randomPolicy(model, dqn_agent, device, node_state, env, epsilon):
 
-        reward = self.playoutPolicy(node.state, self.env)
+        reward = self.playoutPolicy(self.model, self.dqn_agent, self.device, node.state, self.env, self.epsilon)
 
         self.backpropagate(node, reward)
 
@@ -157,7 +160,8 @@ class MonteCarloTreeSearch:
                 actions = self.env.actions
                 for action in actions:
                     if action not in cur_node.children:
-                        childnode = cur_node.state.simulateStep(action=action)
+                        work_env = deepcopy(self.env)
+                        childnode = cur_node.state.simulateStep(env=work_env, action=action)
                         newNode = Node(state=childnode, parent=cur_node)
                         cur_node.children[action] = newNode
                         if len(actions) == len(cur_node.children):
@@ -210,4 +214,3 @@ class MonteCarloTreeSearch:
             bestNodes = visitedBestChild
 
         return random.choice(bestNodes)
-

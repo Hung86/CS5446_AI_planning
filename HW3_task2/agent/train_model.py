@@ -125,10 +125,14 @@ def train(model_class, env):
         epsilon = compute_epsilon(episode)
         state = env.reset()
         episode_rewards = 0.0
+        mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon, 100, 1., 15)
+
         for t in range(t_max):
             # Model takes action
-            action = dqnagent.act(model, device, state, epsilon)
+            #action = dqnagent.act(model, device, state, epsilon)
+            root_node_state = GridWorldState(state, False)
 
+            action = mcts.buildTreeAndReturnBestAction(initialState=root_node_state)
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
             if reward != 0:
