@@ -83,6 +83,37 @@ def compute_epsilon(episode):
     epsilon = min_epsilon + (max_epsilon - min_epsilon) * math.exp(-1. * episode / epsilon_decay)
     return epsilon
 
+def test(model, env, write_file, max_episodes=600):
+    '''
+    Test the `model` on the environment `env` (GridDrivingEnv) for `max_episodes` (`int`) times.
+
+    Output: `avg_rewards` (`float`): the average rewards
+    '''
+    rewards = []
+    for episode in range(max_episodes):
+        state = env.reset()
+        episode_rewards = 0.0
+        for t in range(t_max):
+            action = model.act(state)
+            state, reward, done, info = env.step(action)
+            episode_rewards += reward
+            if done:
+                break
+        rewards.append(episode_rewards)
+    avg_rewards = np.mean(rewards)
+    write_file.write("{} episodes avg rewards : {:.1f}".format(max_episodes, avg_rewards))
+    return avg_rewards
+
+def get_model():
+    '''
+    Load `model` from disk. Location is specified in `model_path`.
+    '''
+    model_class, model_state_dict, input_shape, num_actions = torch.load(model_path)
+    model = eval(model_class)(input_shape, num_actions).to(device)
+    model.load_state_dict(model_state_dict)
+    return model
+
+
 def save_model(model):
     '''
     Save `model` to disk. Location is specified in `model_path`.
@@ -90,7 +121,7 @@ def save_model(model):
     data = (model.__class__.__name__, model.state_dict(), model.input_shape, model.num_actions)
     torch.save(data, model_path)
 
-def train(model_class, env):
+def train(model_class, env, write_file):
     '''
     Train a model of instance `model_class` on environment `env` (`GridDrivingEnv`).
 
@@ -113,13 +144,13 @@ def train(model_class, env):
     memory = ReplayBuffer()
     dqnagent = DQNAgent()
 
-    print(model)
+    write_file.write(model)
 
     # Initialize rewards, losses, and optimizer
     rewards = []
     losses = []
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-    print("train : step 1 , t_max : ", t_max)
+    write_file.write("train : step 1 , t_max : ", t_max)
 
     for episode in range(max_episodes):
         epsilon = compute_epsilon(episode)
@@ -133,11 +164,9 @@ def train(model_class, env):
             root_node_state = GridWorldState(state, False)
 
             action = mtcs.buildTreeAndReturnBestAction(initialState=root_node_state)
-            print("train : action :", action)
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
-            print("train : reward :", reward)
-            print("train : done :", done)
+            write_file.write("train : reward :", reward)
 
             # Save transition to replay buffer
             memory.push(Transition(state, [action], [reward], next_state, [done]))
@@ -162,7 +191,7 @@ def train(model_class, env):
             target.load_state_dict(model.state_dict())
 
         if episode % print_interval == 0 and episode > 0:
-            print(
+            write_file.write(
                 "[Episode {}]\tavg rewards : {:.3f},\tavg loss: : {:.6f},\tbuffer size : {},\tepsilon : {:.1f}%".format(
                     episode, np.mean(rewards[print_interval:]), np.mean(losses[print_interval * 10:]), len(memory),
                     epsilon * 100))
@@ -176,11 +205,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     env = construct_task2_env();
-
+    write_file = open("log.txt", "a")
     if args.train:
-        model = train(AtariDQN, env)
+        model = train(AtariDQN, env, write_file)
         save_model(model)
     else:
         model = get_model()
-    test(model, env, max_episodes=600)
+    test(model, env, write_file, max_episodes=600)
+    write_file.close()
 
