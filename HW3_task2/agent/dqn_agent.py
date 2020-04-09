@@ -145,7 +145,8 @@ class MonteCarloTreeSearch:
         node = self.addNode()
         #def randomPolicy(model, dqn_agent, device, node_state, env, epsilon):
 
-        reward = self.playoutPolicy(self.model, self.dqn_agent, self.device, node.state, self.env, self.epsilon)
+        work_env = deepcopy(self.env)
+        reward = self.playoutPolicy(self.model, self.dqn_agent, self.device, node.state, work_env, self.epsilon)
 
         self.backpropagate(node, reward)
 
