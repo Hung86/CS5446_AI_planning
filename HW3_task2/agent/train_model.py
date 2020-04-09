@@ -125,7 +125,7 @@ def train(model_class, env):
         epsilon = compute_epsilon(episode)
         state = env.reset()
         episode_rewards = 0.0
-        mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon, 100, 1., 15)
+        mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon,env, 100, 1., 15)
 
         for t in range(t_max):
             # Model takes action
