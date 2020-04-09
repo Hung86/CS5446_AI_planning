@@ -107,13 +107,14 @@ class Node:
 
 
 class MonteCarloTreeSearch:
-    def __init__(self, model, device, dqn_agent, epsilon, numiters, explorationParam, playoutPolicy=randomPolicy, random_seed=None):
+    def __init__(self, model, device, dqn_agent, epsilon, env, numiters, explorationParam, playoutPolicy=randomPolicy, random_seed=None):
         '''
         self.numiters : Number of MCTS iterations
         self.explorationParam : exploration constant used in computing value of node
         self.playoutPolicy : Policy followed by agent to simulate rollout from leaf node
         self.root : root node of MCTS tree
         '''
+        self.env = env
         self.model = model
         self.device = device
         self.dqn_agent = dqn_agent
@@ -157,7 +158,7 @@ class MonteCarloTreeSearch:
             if cur_node.allChildrenAdded:
                 cur_node = self.chooseBestActionNode(cur_node, self.explorationParam)
             else:
-                actions = self.env.num_actions
+                actions = self.env.actions
                 for action in actions:
                     if action not in cur_node.children:
                         work_env = deepcopy(self.env)
