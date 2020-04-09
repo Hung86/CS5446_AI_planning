@@ -42,7 +42,7 @@ def randomPolicy(model, dqn_agent, device, node_state, env, epsilon):
     global random
     reward = 0.
     while not node_state.isDone():
-        action = dqnagent.act(model, device, node_state,epsilon)
+        action = dqn_agent.act(model, device, node_state,epsilon)
         node_state = epsilon.simulateStep(env=env, action=action)
         reward += node_state.getReward()
     return reward
