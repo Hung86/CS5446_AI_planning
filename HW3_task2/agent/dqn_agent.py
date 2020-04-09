@@ -157,7 +157,7 @@ class MonteCarloTreeSearch:
             if cur_node.allChildrenAdded:
                 cur_node = self.chooseBestActionNode(cur_node, self.explorationParam)
             else:
-                actions = self.env.actions
+                actions = self.env.num_actions
                 for action in actions:
                     if action not in cur_node.children:
                         work_env = deepcopy(self.env)
