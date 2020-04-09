@@ -137,6 +137,8 @@ def train(model_class, env):
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
             print("train : reward :", reward)
+            print("train : done :", done)
+
             # Save transition to replay buffer
             memory.push(Transition(state, [action], [reward], next_state, [done]))
 
