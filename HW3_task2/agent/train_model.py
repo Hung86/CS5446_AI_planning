@@ -132,7 +132,7 @@ def train(model_class, env):
             #action = dqnagent.act(model, device, state, epsilon)
             root_node_state = GridWorldState(state, False)
 
-            action = mcts.buildTreeAndReturnBestAction(initialState=root_node_state)
+            action = mtcs.buildTreeAndReturnBestAction(initialState=root_node_state)
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
             if reward != 0:
