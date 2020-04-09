@@ -45,6 +45,7 @@ def randomPolicy(model, dqn_agent, device, node_state, env, epsilon):
         action = dqn_agent.act(model, device, node_state.state,epsilon)
         node_state = node_state.simulateStep(env=env, action=action)
         reward += node_state.getReward()
+    print("-------randomPolicy : reward : ", reward)
     return reward
 
 
