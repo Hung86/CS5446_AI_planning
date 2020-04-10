@@ -147,7 +147,7 @@ def train(model_class, env):
             episode_rewards += reward
             if done:
                 break
-        print("train : episode_rewards :", episode_rewards)
+        #print("train : episode_rewards :", episode_rewards)
         rewards.append(episode_rewards)
 
         # Train the model if memory is sufficient
