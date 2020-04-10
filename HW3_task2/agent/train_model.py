@@ -126,25 +126,28 @@ def train(model_class, env):
         epsilon = compute_epsilon(episode)
         state = env.reset()
         episode_rewards = 0.0
-        mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon,env, 100, 1., 15)
+        #mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon,env, 100, 1., 15)
 
         for t in range(t_max):
             # Model takes action
-            #action = dqnagent.act(model, device, state, epsilon)
-            root_node_state = GridWorldState(state, False)
+            action = dqnagent.act(model, device, state, epsilon)
+            #root_node_state = GridWorldState(state, False)
 
-            action = mtcs.buildTreeAndReturnBestAction(initialState=root_node_state)
+            #action = mtcs.buildTreeAndReturnBestAction(initialState=root_node_state)
             # Apply the action to the environment
             next_state, reward, done, info = env.step(action)
-            print("train : reward :", reward)
 
             # Save transition to replay buffer
             memory.push(Transition(state, [action], [reward], next_state, [done]))
 
             state = next_state
+            if t == t_max:
+                print("train : t_max :")
+
             episode_rewards += reward
             if done:
                 break
+        print("train : episode_rewards :", episode_rewards)
         rewards.append(episode_rewards)
 
         # Train the model if memory is sufficient

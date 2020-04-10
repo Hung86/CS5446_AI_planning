@@ -27,11 +27,11 @@ class DQNAgent():
         '''
         #Get a random number and determine if agent should exploit or explore
         rand_num = np.random.random()
-        # if(rand_num < epsilon):#explore by choosing random action
-        #     output_action = np.random.randint(model.num_actions)
-        # else:                   #exploit by choosing best action
-        output_actions = model.forward(state)
-        output_action = torch.argmax(output_actions).item()
+        if(rand_num < epsilon):#explore by choosing random action
+            output_action = np.random.randint(model.num_actions)
+        else:                   #exploit by choosing best action
+            output_actions = model.forward(state)
+            output_action = torch.argmax(output_actions).item()
         return output_action
 
 
