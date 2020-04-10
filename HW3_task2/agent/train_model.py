@@ -178,12 +178,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     env = construct_task2_env();
-    sys.stdout = open("log.txt", "w")
+    #sys.stdout = open("log.txt", "w")
     if args.train:
         model = train(AtariDQN, env)
         save_model(model)
     else:
         model = get_model()
     test(model, env, max_episodes=600)
-    sys.stdout.close()
+    #sys.stdout.close()
 
