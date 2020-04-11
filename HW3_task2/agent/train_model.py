@@ -91,11 +91,12 @@ def test(model, env, max_episodes=600):
     Output: `avg_rewards` (`float`): the average rewards
     '''
     rewards = []
+    dqnagent = DQNAgent()
     for episode in range(max_episodes):
         state = env.reset()
         episode_rewards = 0.0
         for t in range(t_max):
-            action = model.act(state)
+            action = dqnagent.act(state)
             state, reward, done, info = env.step(action)
             episode_rewards += reward
             if done:
