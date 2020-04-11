@@ -84,7 +84,7 @@ def compute_epsilon(episode):
     epsilon = min_epsilon + (max_epsilon - min_epsilon) * math.exp(-1. * episode / epsilon_decay)
     return epsilon
 
-def test(model, env, max_episodes=600):
+def test(model, device, env, max_episodes=600):
     '''
     Test the `model` on the environment `env` (GridDrivingEnv) for `max_episodes` (`int`) times.
 
@@ -96,7 +96,7 @@ def test(model, env, max_episodes=600):
         state = env.reset()
         episode_rewards = 0.0
         for t in range(t_max):
-            action = dqnagent.act(state)
+            action = dqnagent.act(model, device, state)
             state, reward, done, info = env.step(action)
             episode_rewards += reward
             if done:
@@ -216,6 +216,6 @@ if __name__ == '__main__':
         save_model(model)
     else:
         model = get_model()
-    test(model, env, max_episodes=600)
+    test(model, device, env, max_episodes=600)
     #sys.stdout.close()
 
