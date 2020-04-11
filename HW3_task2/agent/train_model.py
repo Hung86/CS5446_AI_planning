@@ -84,6 +84,37 @@ def compute_epsilon(episode):
     epsilon = min_epsilon + (max_epsilon - min_epsilon) * math.exp(-1. * episode / epsilon_decay)
     return epsilon
 
+def test(model, env, max_episodes=600):
+    '''
+    Test the `model` on the environment `env` (GridDrivingEnv) for `max_episodes` (`int`) times.
+
+    Output: `avg_rewards` (`float`): the average rewards
+    '''
+    rewards = []
+    for episode in range(max_episodes):
+        state = env.reset()
+        episode_rewards = 0.0
+        for t in range(t_max):
+            action = model.act(state)
+            state, reward, done, info = env.step(action)
+            episode_rewards += reward
+            if done:
+                break
+        rewards.append(episode_rewards)
+    avg_rewards = np.mean(rewards)
+    print("{} episodes avg rewards : {:.1f}".format(max_episodes, avg_rewards))
+    return avg_rewards
+
+def get_model():
+    '''
+    Load `model` from disk. Location is specified in `model_path`.
+    '''
+    model_class, model_state_dict, input_shape, num_actions = torch.load(model_path)
+    model = eval(model_class)(input_shape, num_actions).to(device)
+    model.load_state_dict(model_state_dict)
+    return model
+
+
 def save_model(model):
     '''
     Save `model` to disk. Location is specified in `model_path`.
