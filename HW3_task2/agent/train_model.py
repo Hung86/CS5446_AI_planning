@@ -144,7 +144,7 @@ def train(model_class, env):
 
     # Initialize replay buffer
     memory = ReplayBuffer()
-    dqnagent = DQNAgent()
+    dqnagent = DQNAgent(model, device)
 
     print(model)
 
@@ -162,7 +162,7 @@ def train(model_class, env):
 
         for t in range(t_max):
             # Model takes action
-            action = dqnagent.act(model, device, state, epsilon)
+            action = dqnagent.act(state, epsilon)
             #root_node_state = GridWorldState(state, False)
 
             #action = mtcs.buildTreeAndReturnBestAction(initialState=root_node_state)
@@ -173,9 +173,6 @@ def train(model_class, env):
             memory.push(Transition(state, [action], [reward], next_state, [done]))
 
             state = next_state
-            if t == t_max:
-                print("train : t_max :")
-
             episode_rewards += reward
             if done:
                 break
