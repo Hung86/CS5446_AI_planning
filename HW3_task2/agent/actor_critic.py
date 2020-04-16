@@ -49,6 +49,13 @@ class ActorCritic():
         self.critic_target.eval()
 
 
+    def choose_action_mtcs(self, state):
+        if not isinstance(state, torch.FloatTensor):
+            state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+
+        output_actions = self.actor(state)
+        output_action = torch.argmax(output_actions).item()
+        return output_action
 
     def choose_action(self, state):
         if not isinstance(state, torch.FloatTensor):

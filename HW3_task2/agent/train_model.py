@@ -170,8 +170,7 @@ def train(actor_critic_agent, env):
             action = mtcs.buildTreeAndReturnBestAction(initialState=root_node_state)
             #action = actor_critic_agent.choose_action(state)
             next_state, reward, done, info = env.step(action)
-            if reward > 0:
-                print("----reward:", reward)
+            print("----reward:", reward)
             memory.push(Transition(state, [action], [reward], next_state, [done]))
 
             # actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
