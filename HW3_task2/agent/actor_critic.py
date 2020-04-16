@@ -55,7 +55,7 @@ class ActorCritic():
         # probabilities = F.softmax(self.actor.forward(state))
         # action_probs = distributions.Categorical(probabilities)
         # actions = action_probs.sample()
-        action_log_prob = self.actor(x)
+        action_log_prob = self.actor(state)
         action_prob = F.softmax(action_log_prob, dim=1).data.cpu().numpy()
         action = np.array([np.random.choice(self.n_action,p=action_prob[i]) for i in range(len(action_prob))])
 
