@@ -66,7 +66,7 @@ def train(actor_critic_agent, env):
     for episode in range(max_episodes):
         state = env.reset()
         episode_rewards = 0.0
-        s_state = np.array(s)
+        s_state = np.array(state)
         print("s_state : len : ", len(s_state))
         print("s_state : array : ", s_state)
         #mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon,env, 100, 1., 15)
