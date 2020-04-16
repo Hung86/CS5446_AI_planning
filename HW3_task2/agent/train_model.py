@@ -61,7 +61,6 @@ def train(actor_critic_agent, env):
     rewards = []
     actor_losses = []
     critic_losses = []
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     print("train : step 1 , t_max : ", t_max)
 
     for episode in range(max_episodes):
