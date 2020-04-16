@@ -34,6 +34,7 @@ from prototype import *
 
 class ActorCritic():
     def __init__(self, env, network_model):
+        self.n_action = env.action_space.n
         self.log_probs = None
         self.actor = network_model(env.observation_space.shape, env.action_space.n).to(device)
         self.critic = network_model(env.observation_space.shape, env.action_space.n).to(device)
@@ -51,12 +52,16 @@ class ActorCritic():
         # self.log_probs = action_probs.log_prob(action)
         # return action.item()
 
-        probabilities = F.softmax(self.actor.forward(state))
-        action_probs = distributions.Categorical(probabilities)
-        actions = action_probs.sample()
-        print("choose_action : len = ", len(action_probs) )
-        print("choose_action : array = ", action_probs)
-        return action_probs
+        # probabilities = F.softmax(self.actor.forward(state))
+        # action_probs = distributions.Categorical(probabilities)
+        # actions = action_probs.sample()
+        action_log_prob = self.actor(x)
+        action_prob = F.softmax(action_log_prob, dim=1).data.cpu().numpy()
+        action = np.array([np.random.choice(self.n_action,p=action_prob[i]) for i in range(len(action_prob))])
+
+        print("choose_action : len = ", len(action) )
+        print("choose_action : array = ", action)
+        return action
 
         # Assume that x is a np.array of shape (nenvs, 4, 84, 84)\n",
 
