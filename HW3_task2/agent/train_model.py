@@ -5,6 +5,7 @@
 from models import *
 from prototype import *
 from actor_critic import  *
+from dqn_env import *
 
 import gym
 import gym_grid_driving
