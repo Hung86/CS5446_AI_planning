@@ -43,8 +43,8 @@ class ActorCritic():
 
     def choose_action(self, state):
         if not isinstance(state, torch.FloatTensor):
-            state = torch.from_numpy(state).float().unsqueeze(0).to(self.device)
-            
+            state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+
         probabilities = F.softmax(self.actor.forward(state))
         action_probs = distributions.Categorical(probabilities)
         action = action_probs.sample()
