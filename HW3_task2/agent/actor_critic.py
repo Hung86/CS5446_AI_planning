@@ -82,7 +82,7 @@ class ActorCritic():
 
     def learn(self, memory):
 
-        target, states, actions, rewards, next_states, dones = memory.sample(batch_size)
+        target, states, actions, rewards, next_states, dones = memory.sample(batch_size, device)
 
         
         # forward calc

@@ -69,20 +69,19 @@ def train(actor_critic_agent, env):
         state = env.reset()
         episode_rewards = 0.0
         #mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon,env, 100, 1., 15)
-        for sample in range (min_buffer):
-            for t in range(t_max):
-                action = actor_critic_agent.choose_action(state)
-                next_state, reward, done, info = env.step(action)
-    
-                memory.push(Transition(state, [action], [reward], next_state, [done]))
-    
-                #actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
-                state = next_state
-                #actor_losses.append(actor_loss.item())
-                #critic_losses.append(critic_loss.item())
-                episode_rewards += reward
-                if done:
-                    break
+        for t in range(t_max):
+            action = actor_critic_agent.choose_action(state)
+            next_state, reward, done, info = env.step(action)
+
+            memory.push(Transition(state, [action], [reward], next_state, [done]))
+
+            #actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
+            state = next_state
+            #actor_losses.append(actor_loss.item())
+            #critic_losses.append(critic_loss.item())
+            episode_rewards += reward
+            if done:
+                break
 
         rewards.append(episode_rewards)
 
