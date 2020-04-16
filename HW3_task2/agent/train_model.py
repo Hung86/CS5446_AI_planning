@@ -100,9 +100,9 @@ def train(actor_critic_agent, env):
 
         if episode % print_interval == 0 and episode > 0:
             print(
-                "[Episode {}]\tavg rewards : {:.3f},\tavg actor loss: : {:.6f},\tavg critic loss: : {:.6f},\tavg action critic loss: : {:.6f},\tepsilon : {:.1f}%".format(
+                "[Episode {}]\tavg rewards : {:.3f},\tavg actor loss: : {:.6f},\tavg critic loss: : {:.6f},\tavg action critic loss: : {:.6f},\tbuffer size : {}".format(
                     episode, np.mean(rewards[print_interval:]), np.mean(actor_losses[print_interval * 10:]), np.mean(critic_losses[print_interval * 10:]), np.mean(action_critic_losses[print_interval * 10:]),
-                    0))
+                    len(memory)))
 
         # for t in range(t_max):
         #     # Model takes action
