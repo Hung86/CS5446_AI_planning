@@ -164,7 +164,7 @@ def train(actor_critic_agent, env):
     for episode in range(max_episodes):
         state = env.reset()
         episode_rewards = 0.0
-        mtcs = MonteCarloTreeSearch(actor_critic_agent,env, 100, 1., 15)
+        mtcs = MonteCarloTreeSearch(actor_critic_agent,env, 300, 1., 50)
         for t in range(t_max):
             root_node_state = GridWorldState(state, False)
             action = mtcs.buildTreeAndReturnBestAction(initialState=root_node_state)
