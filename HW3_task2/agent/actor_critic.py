@@ -5,7 +5,6 @@ import torch.distributions as distributions
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import numpy as np
 
 from models import *
 from prototype import *
@@ -31,41 +30,35 @@ from prototype import *
 # print_interval= 20
 #
 # Transition = collections.namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
+ENT_COEF = 1e-2
 
 
 class ActorCritic():
     def __init__(self, env, network_model):
-        self.n_action = env.action_space.n
         self.log_probs = None
         self.actor = network_model(env.observation_space.shape, env.action_space.n).to(device)
-        self.critic = network_model(env.observation_space.shape, env.action_space.n).to(device)
+        self.critic_net = network_model(env.observation_space.shape, 1).to(device)
+        self.critic_target = network_model(env.observation_space.shape, 1).to(device)
+        self.action_critic = network_model(env.observation_space.shape, env.action_space.n).to(device)
+
         self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=learning_rate)
-        self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=learning_rate)
+        self.critic_optimizer = optim.Adam(self.critic_net.parameters(), lr=learning_rate)
+        self.action_critic_optimizer = optim.Adam(self.action_critic.parameters(), lr=learning_rate)
+
+        self.critic_target.load_state_dict(self.critic_net.state_dict())
+        self.critic_target.eval()
+
 
 
     def choose_action(self, state):
         if not isinstance(state, torch.FloatTensor):
             state = torch.from_numpy(state).float().unsqueeze(0).to(device)
-        #
-        # probabilities = F.softmax(self.actor.forward(state))
-        # action_probs = distributions.Categorical(probabilities)
-        # action = action_probs.sample()
-        # self.log_probs = action_probs.log_prob(action)
-        # return action.item()
 
-        # probabilities = F.softmax(self.actor.forward(state))
-        # action_probs = distributions.Categorical(probabilities)
-        # actions = action_probs.sample()
-        action_log_prob = self.actor(state)
-        action_prob = F.softmax(action_log_prob, dim=1).data.cpu().numpy()
-        action = np.array([np.random.choice(self.n_action,p=action_prob[i]) for i in range(len(action_prob))])
-
-        print("choose_action : len = ", len(action) )
-        print("choose_action : array = ", action)
-        return action
-
-        # Assume that x is a np.array of shape (nenvs, 4, 84, 84)\n",
-
+        probabilities = F.softmax(self.actor.forward(state))
+        action_probs = distributions.Categorical(probabilities)
+        action = action_probs.sample()
+        self.log_probs = action_probs.log_prob(action)
+        return action.item()
         # if not isinstance(state, torch.FloatTensor):
         #     state = torch.from_numpy(state).float().unsqueeze(0).to(self.device)
         # '''
@@ -87,26 +80,59 @@ class ActorCritic():
         #     output_action = torch.argmax(output_actions).item()
         # return output_action
 
-    def learn(self, state, reward, new_state, done):
-        if not isinstance(state, torch.FloatTensor):
-            state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+    def learn(self, memory):
 
-        if not isinstance(new_state, torch.FloatTensor):
-            new_state = torch.from_numpy(new_state).float().unsqueeze(0).to(device)
+        target, states, actions, rewards, next_states, dones = memory.sample(batch_size)
+
+        
+        # forward calc
+        action_log_prob = self.actor(states)
+        action_prob = F.softmax(action_log_prob, dim=1)
+        action_log_prob = F.log_softmax(action_log_prob, dim=1)
+
+        cur_value = self.critic_net(states).squeeze(1)
+        next_value = self.critic_target(next_states)
+        action_value = self.action_critic(states)
+
+        # critic loss. eq (5) in SAC paper
+        value_target = (action_value - ENT_COEF * action_log_prob).gather(1, actions.unsqueeze(1)).squeeze(1)
+        critic_loss = 0.5 * F.smooth_l1_loss(cur_value, value_target.detach())
+
+        # action critic loss. eq (7), (8) in SAC paper
+        action_value_target = rewards + gamma * (1 - dones) * next_value.squeeze(1)
+        action_critic_loss = 0.5 * F.smooth_l1_loss(action_value.gather(1, actions.unsqueeze(1)).squeeze(1), action_value_target.detach())
+
+        # actor loss. eq (10) in SAC paper
+        actor_loss = torch.mean(action_prob*(action_log_prob- F.log_softmax(action_value.detach()/ENT_COEF, dim=1)))
+
+
+
 
         self.actor_optimizer.zero_grad()
-        self.critic_optimizer.zero_grad()
-
-        critic_value = self.critic.forward(state)
-        critic_value_next = self.critic.forward(new_state)
-        td_error = ((reward + gamma * critic_value_next * (1- int(done))) - critic_value)
-
-        actor_loss = -self.log_probs * td_error
-        critic_loss =  td_error**2
-
-        #print(actor_loss, critic_loss)
-        (actor_loss + critic_loss).backward()
-
+        actor_loss.backward()
         self.actor_optimizer.step()
+
+        self.critic_optimizer.zero_grad()
+        critic_loss.backward()
         self.critic_optimizer.step()
-        return actor_loss, critic_loss
+
+        self.action_critic_optimizer.zero_grad()
+        action_critic_loss.backward()
+        self.action_critic_optimizer.step()
+
+        self.critic_target.load_state_dict(self.critic_net.state_dict())
+
+        #
+        # critic_value = self.critic.forward(state)
+        # critic_value_next = self.critic.forward(new_state)
+        # td_error = ((reward + gamma * critic_value_next * (1- int(done))) - critic_value)
+        #
+        # actor_loss = -self.log_probs * td_error
+        # critic_loss =  td_error**2
+        #
+        # #print(actor_loss, critic_loss)
+        # (actor_loss + critic_loss).backward()
+        #
+        # self.actor_optimizer.step()
+        # self.critic_optimizer.step()
+        return actor_loss, critic_loss, action_critic_loss

@@ -6,6 +6,7 @@ from models import *
 from prototype import *
 from actor_critic import  *
 from dqn_env import *
+from replay_buffer import *
 
 import gym
 import gym_grid_driving
@@ -61,37 +62,47 @@ def train(actor_critic_agent, env):
     rewards = []
     actor_losses = []
     critic_losses = []
+    action_critic_losses = []
     print("train : step 1 , t_max : ", t_max)
-
+    memory = ReplayBuffer()
     for episode in range(max_episodes):
         state = env.reset()
         episode_rewards = 0.0
-        s_state = np.array(state)
-        print("s_state : len : ", len(s_state))
-        print("s_state : array : ", s_state)
         #mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon,env, 100, 1., 15)
-        for t in range(t_max):
-            action = actor_critic_agent.choose_action(state)
-            next_state, reward, done, info = env.step(action)
-            env.step()
-
-            print("next s_state : len : ", len(next_state))
-            print("next s_state : array : ", next_state)
-
-            actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
-            state = next_state
-            actor_losses.append(actor_loss.item())
-            critic_losses.append(critic_loss.item())
-            episode_rewards += reward
-            if done:
-                break
+        for sample in range (min_buffer):
+            for t in range(t_max):
+                action = actor_critic_agent.choose_action(state)
+                next_state, reward, done, info = env.step(action)
+    
+                memory.push(Transition(state, [action], [reward], next_state, [done]))
+    
+                #actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
+                state = next_state
+                #actor_losses.append(actor_loss.item())
+                #critic_losses.append(critic_loss.item())
+                episode_rewards += reward
+                if done:
+                    break
 
         rewards.append(episode_rewards)
 
+        # Train the model if memory is sufficient
+        if len(memory) > min_buffer:
+            if np.mean(rewards[print_interval:]) < 0:
+                print('Bad initialization. Please restart the training.')
+                exit()
+                
+            #actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
+            actor_loss, critic_loss, action_critic_loss = actor_critic_agent.learn(memory)
+            actor_losses.append(actor_loss.item())
+            critic_losses.append(critic_loss.item())
+            action_critic_losses.append(action_critic_loss.item())
+
+
         if episode % print_interval == 0 and episode > 0:
             print(
-                "[Episode {}]\tavg rewards : {:.3f},\tavg actor loss: : {:.6f},\tavg critic loss: : {:.6f},\tepsilon : {:.1f}%".format(
-                    episode, np.mean(rewards[print_interval:]), np.mean(actor_losses[print_interval * 10:]), np.mean(critic_losses[print_interval * 10:]),
+                "[Episode {}]\tavg rewards : {:.3f},\tavg actor loss: : {:.6f},\tavg critic loss: : {:.6f},\tavg action critic loss: : {:.6f},\tepsilon : {:.1f}%".format(
+                    episode, np.mean(rewards[print_interval:]), np.mean(actor_losses[print_interval * 10:]), np.mean(critic_losses[print_interval * 10:]), np.mean(action_critic_losses[print_interval * 10:]),
                     0))
 
         # for t in range(t_max):
