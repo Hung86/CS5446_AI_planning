@@ -72,6 +72,12 @@ class ActorCritic():
         # return output_action
 
     def learn(self, state, reward, new_state, done):
+        if not isinstance(state, torch.FloatTensor):
+            state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+
+        if not isinstance(new_state, torch.FloatTensor):
+            new_state = torch.from_numpy(new_state).float().unsqueeze(0).to(device)
+
         self.actor_optimizer.zero_grad()
         self.critic_optimizer.zero_grad()
 
