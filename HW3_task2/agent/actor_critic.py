@@ -54,7 +54,7 @@ class ActorCritic():
         if not isinstance(state, torch.FloatTensor):
             state = torch.from_numpy(state).float().unsqueeze(0).to(device)
 
-        probabilities = F.softmax(self.actor.forward(state))
+        probabilities = F.softmax(self.actor.forward(state), dim=1)
         action_probs = distributions.Categorical(probabilities)
         action = action_probs.sample()
         self.log_probs = action_probs.log_prob(action)
@@ -99,7 +99,7 @@ class ActorCritic():
         critic_loss = 0.5 * F.smooth_l1_loss(cur_value, value_target.detach())
 
         # action critic loss. eq (7), (8) in SAC paper
-        action_value_target = rewards + gamma * (1 - dones) * next_value
+        action_value_target = (rewards + gamma * (1 - dones) * next_value).squeeze(1)
         action_critic_loss = 0.5 * F.smooth_l1_loss(action_value.gather(1, actions).squeeze(1), action_value_target.detach())
 
         # actor loss. eq (10) in SAC paper
