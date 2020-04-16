@@ -73,6 +73,7 @@ def train(actor_critic_agent, env):
         for t in range(t_max):
             action = actor_critic_agent.choose_action(state)
             next_state, reward, done, info = env.step(action)
+            env.step()
 
             print("next s_state : len : ", len(next_state))
             print("next s_state : array : ", next_state)

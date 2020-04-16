@@ -54,9 +54,9 @@ class ActorCritic():
         probabilities = F.softmax(self.actor.forward(state))
         action_probs = distributions.Categorical(probabilities)
         actions = action_probs.sample()
-        print("choose_action : len = ", len(actions) )
-        print("choose_action : array = ", actions)
-        return actions
+        print("choose_action : len = ", len(action_probs) )
+        print("choose_action : array = ", action_probs)
+        return action_probs
 
         # Assume that x is a np.array of shape (nenvs, 4, 84, 84)\n",
 
