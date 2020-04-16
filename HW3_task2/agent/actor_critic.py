@@ -95,7 +95,7 @@ class ActorCritic():
         action_value = self.action_critic(states)
 
         # critic loss. eq (5) in SAC paper
-        value_target = (action_value - ENT_COEF * action_log_prob).gather(1, actions.unsqueeze(1)).squeeze(1)
+        value_target = (action_value - ENT_COEF * action_log_prob).gather(1, actions).squeeze(1)
         critic_loss = 0.5 * F.smooth_l1_loss(cur_value, value_target.detach())
 
         # action critic loss. eq (7), (8) in SAC paper
