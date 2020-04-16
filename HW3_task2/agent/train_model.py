@@ -82,7 +82,6 @@ def train(actor_critic_agent, env):
             episode_rewards += reward
             if done:
                 break
-        print("episode_rewards : ", episode_rewards)
         rewards.append(episode_rewards)
 
         # Train the model if memory is sufficient
