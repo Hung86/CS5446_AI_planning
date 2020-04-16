@@ -81,7 +81,7 @@ class ActorCritic():
         # return output_action
 
     def learn(self, memory):
-
+        print("learning ........")
         states, actions, rewards, next_states, dones = memory.sample(batch_size, device)
 
         
