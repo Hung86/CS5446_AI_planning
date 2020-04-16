@@ -64,7 +64,6 @@ def train(actor_critic_agent, env):
     print("train : step 1 , t_max : ", t_max)
 
     for episode in range(max_episodes):
-        epsilon = compute_epsilon(episode)
         state = env.reset()
         episode_rewards = 0.0
         #mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon,env, 100, 1., 15)
