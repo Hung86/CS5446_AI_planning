@@ -183,16 +183,16 @@ def train(actor_critic_agent, env):
         rewards.append(episode_rewards)
 
         # Train the model if memory is sufficient
-        if len(memory) > min_buffer:
-            if np.mean(rewards[print_interval:]) < 0:
-                print('Bad initialization. Please restart the training.')
-                exit()
-
-            # actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
-            actor_loss, critic_loss, action_critic_loss = actor_critic_agent.learn(memory)
-            actor_losses.append(actor_loss.item())
-            critic_losses.append(critic_loss.item())
-            action_critic_losses.append(action_critic_loss.item())
+        # if len(memory) > min_buffer:
+        #     if np.mean(rewards[print_interval:]) < 0:
+        #         print('Bad initialization. Please restart the training.')
+        #         exit()
+        #
+        #     # actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
+        #     actor_loss, critic_loss, action_critic_loss = actor_critic_agent.learn(memory)
+        #     actor_losses.append(actor_loss.item())
+        #     critic_losses.append(critic_loss.item())
+        #     action_critic_losses.append(action_critic_loss.item())
 
         if episode % print_interval == 0 and episode > 0:
             print(
