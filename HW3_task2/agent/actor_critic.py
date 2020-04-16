@@ -37,8 +37,8 @@ class ActorCritic():
     def __init__(self, env, network_model):
         self.log_probs = None
         self.actor = network_model(env.observation_space.shape, env.action_space.n).to(device)
-        self.critic_net = network_model(env.observation_space.shape, 1).to(device)
-        self.critic_target = network_model(env.observation_space.shape, 1).to(device)
+        self.critic_net = network_model(env.observation_space.shape, env.action_space.n).to(device)
+        self.critic_target = network_model(env.observation_space.shape, env.action_space.n).to(device)
         self.action_critic = network_model(env.observation_space.shape, env.action_space.n).to(device)
 
         self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=learning_rate)
@@ -95,11 +95,11 @@ class ActorCritic():
 
         # critic loss. eq (5) in SAC paper
         value_target = (action_value - ENT_COEF * action_log_prob).gather(1, actions).squeeze(1)
-        critic_loss = 0.5 * F.smooth_l1_loss(cur_value, value_target.detach())
+        critic_loss =  F.smooth_l1_loss(cur_value, value_target.detach())
 
         # action critic loss. eq (7), (8) in SAC paper
         action_value_target = (rewards + gamma * (1 - dones) * next_value).squeeze(1)
-        action_critic_loss = 0.5 * F.smooth_l1_loss(action_value.gather(1, actions).squeeze(1), action_value_target.detach())
+        action_critic_loss = F.smooth_l1_loss(action_value.gather(1, actions).squeeze(1), action_value_target.detach())
 
         # actor loss. eq (10) in SAC paper
         actor_loss = torch.mean(action_prob*(action_log_prob- F.log_softmax(action_value.detach()/ENT_COEF, dim=1)))
