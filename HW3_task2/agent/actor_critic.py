@@ -88,6 +88,7 @@ class ActorCritic():
         actor_loss = -self.log_probs * td_error
         critic_loss =  td_error**2
 
+        print(actor_loss, critic_loss)
         (actor_loss + critic_loss).backward()
 
         self.actor_optimizer.step()
