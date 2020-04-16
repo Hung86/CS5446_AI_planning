@@ -35,8 +35,8 @@ from prototype import *
 class ActorCritic():
     def __init__(self, env, network_model):
         self.log_probs = None
-        self.actor = model_class(env.observation_space.shape, env.action_space.n).to(device)
-        self.critic = model_class(env.observation_space.shape, env.action_space.n).to(device)
+        self.actor = network_model(env.observation_space.shape, env.action_space.n).to(device)
+        self.critic = network_model(env.observation_space.shape, env.action_space.n).to(device)
         self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=learning_rate)
         self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=learning_rate)
 
