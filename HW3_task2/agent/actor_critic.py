@@ -44,12 +44,22 @@ class ActorCritic():
     def choose_action(self, state):
         if not isinstance(state, torch.FloatTensor):
             state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+        #
+        # probabilities = F.softmax(self.actor.forward(state))
+        # action_probs = distributions.Categorical(probabilities)
+        # action = action_probs.sample()
+        # self.log_probs = action_probs.log_prob(action)
+        # return action.item()
 
         probabilities = F.softmax(self.actor.forward(state))
         action_probs = distributions.Categorical(probabilities)
-        action = action_probs.sample()
-        self.log_probs = action_probs.log_prob(action)
-        return action.item()
+        actions = action_probs.sample()
+        print("choose_action : len = ", len(actions) )
+        print("choose_action : array = ", actions)
+        return actions
+
+        # Assume that x is a np.array of shape (nenvs, 4, 84, 84)\n",
+
         # if not isinstance(state, torch.FloatTensor):
         #     state = torch.from_numpy(state).float().unsqueeze(0).to(self.device)
         # '''
