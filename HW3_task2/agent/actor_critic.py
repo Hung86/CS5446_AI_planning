@@ -41,7 +41,7 @@ class ActorCritic():
         self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=learning_rate)
 
 
-    def choose_act(self, state, epsilon=0.0):
+    def choose_action(self, state):
         probabilities = F.softmax(self.actor.forward(state))
         action_probs = distributions.Categorical(probabilities)
         action = action_probs.sample()
