@@ -81,7 +81,7 @@ def train(actor_critic_agent, env):
         for t in range(t_max):
             action = actor_critic_agent.choose_action(state, epsilon)
             next_state, reward, done, info = env.step(action)
-
+            print("---info:",info)
             #memory.push(Transition(state, [action], [reward], next_state, [done]))
 
             actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
