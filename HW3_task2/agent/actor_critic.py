@@ -2,6 +2,8 @@ import torch
 import torch.autograd as autograd
 import torch.distributions as distributions
 import random
+import numpy as np
+
 
 import torch.nn as nn
 import torch.nn.functional as F
