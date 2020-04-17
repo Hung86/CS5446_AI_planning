@@ -105,7 +105,7 @@ class MonteCarloTreeSearch:
         self.root = Node(state=initialState, parent=None)
         for i in range(self.numiters):
             self.addNodeAndBackpropagate()
-        bestChild = self.chooseBestActionNode(self.root, 0)
+        bestChild = self.chooseBestActionNode(self.root, 1.)
         for action, cur_node in self.root.children.items():
             if cur_node is bestChild:
                 return action
