@@ -158,6 +158,8 @@ if __name__ == '__main__':
     env4 = construct_task2_env_4();
 
     #sys.stdout = open("log.txt", "w")
+
+    print("Cuda version : ",  torch.cuda.is_available())
     if args.train:
         model = ActorCritic(env, AtariDQN)
         train(model, env1)
