@@ -46,6 +46,13 @@ def save_model(model):
     data = (model.__class__.__name__, model.state_dict(), model.input_shape, model.num_actions)
     torch.save(data, model_path)
 
+def compute_epsilon(episode):
+    '''
+    Compute epsilon used for epsilon-greedy exploration
+    '''
+    epsilon = min_epsilon + (max_epsilon - min_epsilon) * math.exp(-1. * episode / epsilon_decay)
+    return epsilon
+
 def train(actor_critic_agent, env):
     '''
     Train a model of instance `model_class` on environment `env` (`GridDrivingEnv`).
@@ -67,11 +74,12 @@ def train(actor_critic_agent, env):
     print("train : step 1 , t_max : ", t_max)
     memory = ReplayBuffer()
     for episode in range(max_episodes):
+        epsilon = compute_epsilon(episode)
         state = env.reset()
         episode_rewards = 0.0
         #mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon,env, 100, 1., 15)
         for t in range(t_max):
-            action = actor_critic_agent.choose_action(state)
+            action = actor_critic_agent.choose_action(state, epsilon)
             next_state, reward, done, info = env.step(action)
 
             #memory.push(Transition(state, [action], [reward], next_state, [done]))
@@ -101,9 +109,9 @@ def train(actor_critic_agent, env):
 
         if episode % print_interval == 0 and episode > 0:
             print(
-                "[Episode {}]\tavg rewards : {:.3f},\tavg actor loss: : {:.6f},\tavg critic loss: : {:.6f},\tavg action critic loss: : {:.6f},\tbuffer size : {}".format(
+                "[Episode {}]\tavg rewards : {:.3f},\tavg actor loss: : {:.6f},\tavg critic loss: : {:.6f},\tavg action critic loss: : {:.6f},\tbuffer size : {},\tepsilon : {:.1f}%".format(
                     episode, np.mean(rewards[print_interval:]), np.mean(actor_losses[print_interval * 10:]), np.mean(critic_losses[print_interval * 10:]), np.mean(action_critic_losses[print_interval * 10:]),
-                    len(memory)))
+                    len(memory),epsilon*100))
 
         # for t in range(t_max):
         #     # Model takes action

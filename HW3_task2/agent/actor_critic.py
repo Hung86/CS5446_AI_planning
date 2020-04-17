@@ -1,6 +1,7 @@
 import torch
 import torch.autograd as autograd
 import torch.distributions as distributions
+import random
 
 import torch.nn as nn
 import torch.nn.functional as F
@@ -51,15 +52,18 @@ class ActorCritic():
         output_action = torch.argmax(output_actions).item()
         return output_action
 
-    def choose_action(self, state):
+    def choose_action(self, state, epsilon=0.0):
         if not isinstance(state, torch.FloatTensor):
             state = torch.from_numpy(state).float().unsqueeze(0).to(device)
-
-        probabilities = F.softmax(self.actor.forward(state), dim=1)
-        action_probs = distributions.Categorical(probabilities)
-        action = action_probs.sample()
-        self.log_probs = action_probs.log_prob(action)
-        return action.item()
+        rand_num = np.random.random()
+        if(rand_num < epsilon):#explore by choosing random action
+            return np.random.randint(self.actor.num_actions)
+        else:                   #exploit by choosing best action
+            probabilities = F.softmax(self.actor.forward(state), dim=1)
+            action_probs = distributions.Categorical(probabilities)
+            action = action_probs.sample()
+            self.log_probs = action_probs.log_prob(action)
+            return action.item()
         # if not isinstance(state, torch.FloatTensor):
         #     state = torch.from_numpy(state).float().unsqueeze(0).to(self.device)
         # '''
