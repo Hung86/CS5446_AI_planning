@@ -174,6 +174,7 @@ class MonteCarloTreeSearch:
             if n_child_visit != 0:
                 temp = r_child_reward / n_child_visit + explorationValue * math.sqrt(
                     math.log(n_parent_visit) / n_child_visit)
+                print("------temp:",temp)
                 if temp > bestValue:
                     visitedBestChild.clear()
                     visitedBestChild.append(child)
