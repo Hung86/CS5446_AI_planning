@@ -42,9 +42,6 @@ class ActorCritic():
         self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=learning_rate)
         self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=learning_rate)
 
-        self.critic_target.load_state_dict(self.critic_net.state_dict())
-        self.critic_target.eval()
-
 
     def choose_action_mtcs(self, state):
         if not isinstance(state, torch.FloatTensor):
