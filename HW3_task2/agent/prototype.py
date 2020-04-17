@@ -4,7 +4,7 @@ import os
 import sys
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 script_path = os.path.dirname(os.path.realpath(__file__))
 model_path = os.path.join(script_path, 'model.pt')
 
