@@ -20,7 +20,7 @@ from gym_grid_driving.envs.grid_driving import LaneSpec, MaskSpec, Point
 #     return gym.make('GridDriving-v0', **config)
 
 def construct_task2_env():
-    config = {'observation_type': 'tensor', 'agent_speed_range': [-3, -1], 'width': 7,
+    config = {'observation_type': 'tensor', 'agent_speed_range': [-3, -1], 'width': 10,
               'lanes': [LaneSpec(cars=1, speed_range=[-2, -1]),
                         LaneSpec(cars=1, speed_range=[-2, -1]),
                         LaneSpec(cars=1, speed_range=[-1, -1]),
