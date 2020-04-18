@@ -27,8 +27,6 @@ class ExampleAgent(Agent):
         in this method.
         '''
         test_case_id = kwargs.get('test_case_id')
-        print('>>> __INIT__ >>>')
-        print('test_case_id:', test_case_id)
         self.model = get_model()
         '''
         # Uncomment to help debugging
@@ -55,16 +53,17 @@ class ExampleAgent(Agent):
         agent_speed_range   = kwargs.get('agent_speed_range')
         gamma               = kwargs.get('gamma')
 
-        print('>>> INITIALIZE >>>')
-        print('fast_downward_path:', fast_downward_path)
-        print('agent_speed_range:', agent_speed_range)
-        print('gamma:', gamma)
         '''
         # Uncomment to help debugging
         print('>>> INITIALIZE >>>')
         print('fast_downward_path:', fast_downward_path)
         print('agent_speed_range:', agent_speed_range)
         print('gamma:', gamma)
+        
+        >>> INITIALIZE >>>
+        fast_downward_path: /fast_downward/
+        agent_speed_range: (-3, -1)
+        gamma: 1
         '''
 
     def step(self, state, *args, **kwargs):

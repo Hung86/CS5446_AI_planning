@@ -164,13 +164,12 @@ def train(actor_critic_agent, env):
     for episode in range(max_episodes):
         state = env.reset()
         episode_rewards = 0.0
-        mtcs = MonteCarloTreeSearch(actor_critic_agent,env, 50, 1., 15)
+        mtcs = MonteCarloTreeSearch(actor_critic_agent,env, 500, 1., 120)
         for t in range(t_max):
             root_node_state = GridWorldState(state, False)
             action = mtcs.buildTreeAndReturnBestAction(initialState=root_node_state)
             #action = actor_critic_agent.choose_action(state)
             next_state, reward, done, info = env.step(action)
-            print("----reward:", reward)
             memory.push(Transition(state, [action], [reward], next_state, [done]))
 
             # actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
