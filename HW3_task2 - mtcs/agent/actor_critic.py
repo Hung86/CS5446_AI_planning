@@ -36,17 +36,21 @@ ENT_COEF = 1e-2
 class ActorCritic():
     def __init__(self, env, network_model):
         self.log_probs = None
+
+        self.mtcs_net = network_model(env.observation_space.shape, env.action_space.n).to(device)
+        self.mtcs_target = network_model(env.observation_space.shape, env.action_space.n).to(device)
+        self.mtcs_target.load_state_dict(self.mtcs_net.state_dict())
+        self.mtcs_target.eval()
+        
         self.actor = network_model(env.observation_space.shape, env.action_space.n).to(device)
         self.critic_net = network_model(env.observation_space.shape, 1).to(device)
         self.critic_target = network_model(env.observation_space.shape, 1).to(device)
         self.action_critic = network_model(env.observation_space.shape, env.action_space.n).to(device)
 
+        self.mtcs_net_optimizer = optim.Adam(self.mtcs_net.parameters(), lr=learning_rate)
         self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=learning_rate)
         self.critic_optimizer = optim.Adam(self.critic_net.parameters(), lr=learning_rate)
         self.action_critic_optimizer = optim.Adam(self.action_critic.parameters(), lr=learning_rate)
-
-        self.critic_target.load_state_dict(self.critic_net.state_dict())
-        self.critic_target.eval()
 
 
     def choose_action_mtcs(self, state):
@@ -86,6 +90,30 @@ class ActorCritic():
         #     output_actions = self.model.forward(state)
         #     output_action = torch.argmax(output_actions).item()
         # return output_action
+    def learn_mcts(self, memory):
+        if len(memory) >= batch_size:
+            print("--learning mcts")
+            states, actions, rewards, next_states, dones = memory.sample(batch_size, device)
+            indices = np.arange(len(rewards))
+            q_state_values = self.mtcs_net(states).gather(1, actions)
+
+            q_next_state_values = self.mtcs_target(next_states).max(1)[0].detach()
+
+            # Create mask based on terminal state
+            mask = dones.clone()
+            mask[dones == 0.0] = 1.0
+            mask[dones > 0.0] = 0.0
+
+            # If its terminal(done), then set as reward only
+            q_target_value = ((q_next_state_values * gamma) * mask[indices, [0]]) + rewards[indices, [0]]
+
+            theloss = F.smooth_l1_loss(q_state_values, q_target_value.unsqueeze(1))
+
+            self.mtcs_net_optimizer.zero_grad()
+            theloss.backward()
+            self.mtcs_net_optimize.step()
+            self.mtcs_target.load_state_dict(self.mtcs_net.state_dict())
+
 
     def learn(self, memory):
         if len(memory) >= batch_size:

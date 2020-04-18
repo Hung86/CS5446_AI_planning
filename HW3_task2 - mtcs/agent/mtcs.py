@@ -19,8 +19,8 @@ def randomPolicy(agent, node_state, env, memory):
     global random
     reward = 0.
     while not node_state.isDone():
-        #action = random.choice(env.action_space.n)
-        action = agent.choose_action(node_state.getState())
+        action = random.choice(env.action_space.n)
+        #action = agent.choose_action(node_state.getState())
         node_state = node_state.simulateStep(env=env, action=action, memory=memory)
         reward += node_state.getReward()
         if reward > 0:
@@ -134,7 +134,7 @@ class MonteCarloTreeSearch:
 
         work_env = deepcopy(self.env)
         reward = self.playoutPolicy(self.agent, node.state, work_env, self.memory)
-        self.agent.learn(self.memory)
+        self.agent.learn_mcts(self.memory)
 
         self.backpropagate(node, reward)
 
