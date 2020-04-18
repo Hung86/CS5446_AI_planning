@@ -3,13 +3,20 @@ try:
 except:
     class Agent(object): pass
 import random
-import torch
 import gym
 import os
 
+import torch
+import torch.autograd as autograd
+import torch.distributions as distributions
 
-from .models import *
-from .env import *
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+import numpy as np
+
+from models import *
+from env import *
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -90,9 +97,11 @@ class ExampleAgent(Agent):
         if not isinstance(state, torch.FloatTensor):
             state = torch.from_numpy(state).float().unsqueeze(0).to(device)
 
-        output_actions = self.model.forward(state)
-        output_action = torch.argmax(output_actions).item()
-        return output_action
+        probabilities = F.softmax(self.actor.forward(state), dim=1)
+        action_probs = distributions.Categorical(probabilities)
+        action = action_probs.sample()
+        self.log_probs = action_probs.log_prob(action)
+        return action.item()
 
     def update(self, *args, **kwargs):
         '''
@@ -135,7 +144,7 @@ def get_model():
     Load `model` from disk. Location is specified in `model_path`.
     '''
     script_path = os.path.dirname(os.path.realpath(__file__))
-    model_path = os.path.join(script_path, 'model.pt')
+    model_path = os.path.join(script_path, 'actor_model.pt')
     model_class, model_state_dict, input_shape, num_actions = torch.load(model_path)
     model = eval(model_class)(input_shape, num_actions).to(device)
     model.load_state_dict(model_state_dict)
