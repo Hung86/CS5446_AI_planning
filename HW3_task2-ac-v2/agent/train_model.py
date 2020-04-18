@@ -179,7 +179,7 @@ def train(actor_critic_agent, env):
         print("----episode_rewards:", episode_rewards)
         rewards.append(episode_rewards)
 
-        Train the model if memory is sufficient
+        #Train the model if memory is sufficient
         if len(memory) > min_buffer:
             if np.mean(rewards[print_interval:]) < 0:
                 print('Bad initialization. Please restart the training.')
