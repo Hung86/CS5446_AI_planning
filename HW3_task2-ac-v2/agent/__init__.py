@@ -97,7 +97,7 @@ class ExampleAgent(Agent):
         if not isinstance(state, torch.FloatTensor):
             state = torch.from_numpy(state).float().unsqueeze(0).to(device)
 
-        probabilities = F.softmax(self.actor.forward(state), dim=1)
+        probabilities = F.softmax(self.model.forward(state), dim=1)
         action_probs = distributions.Categorical(probabilities)
         action = action_probs.sample()
         self.log_probs = action_probs.log_prob(action)
