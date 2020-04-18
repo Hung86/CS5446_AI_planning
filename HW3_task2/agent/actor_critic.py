@@ -6,6 +6,9 @@ import random
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import math
+import os
+import sys
 
 from models import *
 from prototype import *
@@ -110,3 +113,12 @@ class ActorCritic():
         return actor_loss, critic_loss
 
 
+    def save_models(self):
+        script_path = os.path.dirname(os.path.realpath(__file__))
+        actor_model_path = os.path.join(script_path, 'actor_model.pt')
+        actor_data = (self.actor.__class__.__name__, self.actor.state_dict(), self.actor.input_shape, self.actor.num_actions)
+        torch.save(actor_data, actor_model_path)
+
+        critic_model_path = os.path.join(script_path, 'critic_model.pt')
+        critic_data = (self.critic.__class__.__name__, self.critic.state_dict(), self.critic.input_shape, self.critic.num_actions)
+        torch.save(critic_data, critic_model_path)
