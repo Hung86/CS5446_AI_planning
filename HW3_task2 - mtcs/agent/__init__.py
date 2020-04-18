@@ -4,6 +4,8 @@ except:
     class Agent(object): pass
 import random
 import torch
+import gym
+
 from models import *
 
 
