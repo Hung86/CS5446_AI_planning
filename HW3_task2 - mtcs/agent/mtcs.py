@@ -134,7 +134,7 @@ class MonteCarloTreeSearch:
 
         work_env = deepcopy(self.env)
         reward = self.playoutPolicy(self.agent, node.state, work_env, self.memory)
-        self.agent.learn_mcts(self.memory)
+        #self.agent.learn_mcts(self.memory)
 
         self.backpropagate(node, reward)
 

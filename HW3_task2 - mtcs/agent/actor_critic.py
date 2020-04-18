@@ -35,14 +35,12 @@ ENT_COEF = 1e-2
 
 
 class ActorCritic():
-    def __init__(self, env, network_model):
+    def __init__(self, env, network_model, trained_model):
         self.log_probs = None
 
-        self.mtcs_net = network_model(env.observation_space.shape, env.action_space.n).to(device)
-        self.mtcs_target = network_model(env.observation_space.shape, env.action_space.n).to(device)
-        self.mtcs_target.load_state_dict(self.mtcs_net.state_dict())
-        self.mtcs_target.eval()
-        
+        self.mtcs_net = trained_model
+        self.mtcs_target = trained_model
+
         self.actor = network_model(env.observation_space.shape, env.action_space.n).to(device)
         self.critic_net = network_model(env.observation_space.shape, 1).to(device)
         self.critic_target = network_model(env.observation_space.shape, 1).to(device)
@@ -58,7 +56,7 @@ class ActorCritic():
         if not isinstance(state, torch.FloatTensor):
             state = torch.from_numpy(state).float().unsqueeze(0).to(device)
 
-        output_actions = self.actor(state)
+        output_actions = self.mtcs_net(state)
         output_action = torch.argmax(output_actions).item()
         return output_action
 

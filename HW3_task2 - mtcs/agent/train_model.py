@@ -165,7 +165,7 @@ def train(actor_critic_agent, env):
     for episode in range(max_episodes):
         state = env.reset()
         episode_rewards = 0.0
-        mtcs = MonteCarloTreeSearch(actor_critic_agent,env, memory_mcts, 50, 1., 20)
+        mtcs = MonteCarloTreeSearch(actor_critic_agent,env, memory_mcts, 20, 1., 20)
         for t in range(t_max):
             root_node_state = GridWorldState(state, False)
             action = mtcs.buildTreeAndReturnBestAction(initialState=root_node_state)
@@ -248,7 +248,7 @@ if __name__ == '__main__':
     env = construct_task2_env();
     #sys.stdout = open("log.txt", "w")
     if args.train:
-        model = train(ActorCritic(env, AtariDQN), env)
+        model = train(ActorCritic(env, AtariDQN, get_model()), env)
         # save_model(model)
     else:
         model = get_model()
