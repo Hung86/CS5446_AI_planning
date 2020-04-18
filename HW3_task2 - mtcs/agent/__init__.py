@@ -90,6 +90,10 @@ class ExampleAgent(Agent):
         print('>>> STEP >>>')
         print('state:', state)
         '''
+
+        if not isinstance(state, torch.FloatTensor):
+            state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+
         output_actions = self.model.forward(state)
         output_action = torch.argmax(output_actions).item()
         return output_action
