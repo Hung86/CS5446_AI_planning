@@ -4,6 +4,7 @@ except:
     class Agent(object): pass
 import random
 import torch
+from models import *
 
 
 class ExampleAgent(Agent):
