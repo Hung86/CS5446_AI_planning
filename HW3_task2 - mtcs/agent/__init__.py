@@ -7,6 +7,7 @@ import torch
 import gym
 
 from models import *
+from env import *
 
 
 class ExampleAgent(Agent):
