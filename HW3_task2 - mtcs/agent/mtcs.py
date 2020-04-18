@@ -19,7 +19,11 @@ def randomPolicy(agent, node_state, env):
     while not node_state.isDone():
         action = random.choice(env.action_space.n)
         node_state = node_state.simulateStep(env=env, action=action)
-        reward += node_state.getReward()
+        if node_state.isDone():
+            if node_state.getReward() > 0:
+                reward = node_state.getReward()
+            else:
+                reward = -5
     return reward
 
 

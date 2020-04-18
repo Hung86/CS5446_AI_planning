@@ -8,8 +8,8 @@ import gym
 import os
 
 
-from models import *
-from env import *
+from .models import *
+from .env import *
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
