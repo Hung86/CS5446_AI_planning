@@ -3,6 +3,8 @@ try:
 except:
     class Agent(object): pass
 import random
+import torch
+
 
 class ExampleAgent(Agent):
     '''
@@ -18,6 +20,9 @@ class ExampleAgent(Agent):
         in this method.
         '''
         test_case_id = kwargs.get('test_case_id')
+        print('>>> __INIT__ >>>')
+        print('test_case_id:', test_case_id)
+        self.model = get_model()
         '''
         # Uncomment to help debugging
         print('>>> __INIT__ >>>')
@@ -42,6 +47,11 @@ class ExampleAgent(Agent):
         fast_downward_path  = kwargs.get('fast_downward_path')
         agent_speed_range   = kwargs.get('agent_speed_range')
         gamma               = kwargs.get('gamma')
+
+        print('>>> INITIALIZE >>>')
+        print('fast_downward_path:', fast_downward_path)
+        print('agent_speed_range:', agent_speed_range)
+        print('gamma:', gamma)
         '''
         # Uncomment to help debugging
         print('>>> INITIALIZE >>>')
@@ -64,12 +74,18 @@ class ExampleAgent(Agent):
         * `action`: `int` representing the index of an action or instance of class `Action`.
                     In this example, we only return a random action
         '''
+
+        print('>>> STEP >>>')
+        print('state:', state)
         '''
+        
         # Uncomment to help debugging
         print('>>> STEP >>>')
         print('state:', state)
         '''
-        return random.randrange(5)
+        output_actions = self.model.forward(state)
+        output_action = torch.argmax(output_actions).item()
+        return output_action
 
     def update(self, *args, **kwargs):
         '''
@@ -107,6 +123,16 @@ class ExampleAgent(Agent):
         print('info:', info)
         '''
 
+    def get_model():
+        '''
+        Load `model` from disk. Location is specified in `model_path`.
+        '''
+        script_path = os.path.dirname(os.path.realpath(__file__))
+        model_path = os.path.join(script_path, 'model.pt')
+        model_class, model_state_dict, input_shape, num_actions = torch.load(model_path)
+        model = eval(model_class)(input_shape, num_actions).to(device)
+        model.load_state_dict(model_state_dict)
+        return model
 
 def create_agent(test_case_id, *args, **kwargs):
     '''
