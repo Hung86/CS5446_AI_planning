@@ -88,57 +88,56 @@ class ActorCritic():
         # return output_action
 
     def learn(self, memory):
-        states, actions, rewards, next_states, dones = memory.sample(batch_size, device)
-
-        
-        # forward calc
-        action_log_prob = self.actor(states)
-        action_prob = F.softmax(action_log_prob, dim=1)
-        action_log_prob = F.log_softmax(action_log_prob, dim=1)
-
-        cur_value = self.critic_net(states).squeeze(1)
-        next_value = self.critic_target(next_states)
-        action_value = self.action_critic(states)
-
-        # critic loss. eq (5) in SAC paper
-        value_target = (action_value - ENT_COEF * action_log_prob).gather(1, actions).squeeze(1)
-        critic_loss =  F.smooth_l1_loss(cur_value, value_target.detach())
-
-        # action critic loss. eq (7), (8) in SAC paper
-        action_value_target = (rewards + gamma * (1 - dones) * next_value).squeeze(1)
-        action_critic_loss = F.smooth_l1_loss(action_value.gather(1, actions).squeeze(1), action_value_target.detach())
-
-        # actor loss. eq (10) in SAC paper
-        actor_loss = torch.mean(action_prob*(action_log_prob- F.log_softmax(action_value.detach()/ENT_COEF, dim=1)))
-
-
-
-
-        self.actor_optimizer.zero_grad()
-        actor_loss.backward()
-        self.actor_optimizer.step()
-
-        self.critic_optimizer.zero_grad()
-        critic_loss.backward()
-        self.critic_optimizer.step()
-
-        self.action_critic_optimizer.zero_grad()
-        action_critic_loss.backward()
-        self.action_critic_optimizer.step()
-
-        self.critic_target.load_state_dict(self.critic_net.state_dict())
-
-        #
-        # critic_value = self.critic.forward(state)
-        # critic_value_next = self.critic.forward(new_state)
-        # td_error = ((reward + gamma * critic_value_next * (1- int(done))) - critic_value)
-        #
-        # actor_loss = -self.log_probs * td_error
-        # critic_loss =  td_error**2
-        #
-        # #print(actor_loss, critic_loss)
-        # (actor_loss + critic_loss).backward()
-        #
-        # self.actor_optimizer.step()
-        # self.critic_optimizer.step()
-        return actor_loss, critic_loss, action_critic_loss
+        if len(memory) >= batch_size:
+            states, actions, rewards, next_states, dones = memory.sample(batch_size, device)
+    
+            
+            # forward calc
+            action_log_prob = self.actor(states)
+            action_prob = F.softmax(action_log_prob, dim=1)
+            action_log_prob = F.log_softmax(action_log_prob, dim=1)
+    
+            cur_value = self.critic_net(states).squeeze(1)
+            next_value = self.critic_target(next_states)
+            action_value = self.action_critic(states)
+    
+            # critic loss. eq (5) in SAC paper
+            value_target = (action_value - ENT_COEF * action_log_prob).gather(1, actions).squeeze(1)
+            critic_loss =  0.5 * F.smooth_l1_loss(cur_value, value_target.detach())
+    
+            # action critic loss. eq (7), (8) in SAC paper
+            action_value_target = (rewards + gamma * (1 - dones) * next_value).squeeze(1)
+            action_critic_loss = 0.5 * F.smooth_l1_loss(action_value.gather(1, actions).squeeze(1), action_value_target.detach())
+    
+            # actor loss. eq (10) in SAC paper
+            actor_loss = torch.mean(action_prob*(action_log_prob- F.log_softmax(action_value.detach()/ENT_COEF, dim=1)))
+    
+    
+            self.actor_optimizer.zero_grad()
+            actor_loss.backward()
+            self.actor_optimizer.step()
+    
+            self.critic_optimizer.zero_grad()
+            critic_loss.backward()
+            self.critic_optimizer.step()
+    
+            self.action_critic_optimizer.zero_grad()
+            action_critic_loss.backward()
+            self.action_critic_optimizer.step()
+    
+            self.critic_target.load_state_dict(self.critic_net.state_dict())
+    
+            #
+            # critic_value = self.critic.forward(state)
+            # critic_value_next = self.critic.forward(new_state)
+            # td_error = ((reward + gamma * critic_value_next * (1- int(done))) - critic_value)
+            #
+            # actor_loss = -self.log_probs * td_error
+            # critic_loss =  td_error**2
+            #
+            # #print(actor_loss, critic_loss)
+            # (actor_loss + critic_loss).backward()
+            #
+            # self.actor_optimizer.step()
+            # self.critic_optimizer.step()
+            return actor_loss, critic_loss, action_critic_loss

@@ -6,24 +6,23 @@ from gym.utils import seeding
 import gym_grid_driving
 from gym_grid_driving.envs.grid_driving import LaneSpec, MaskSpec, Point
 import math
+from prototype import *
 
 random = None
 
 
-def randomPolicy(agent, node_state, env):
+
+def randomPolicy(agent, node_state, env, memory):
     '''
     Policy followed in MCTS simulation for playout
     '''
     global random
     reward = 0.
     while not node_state.isDone():
-        action = random.choice(env.action_space.n)
-        node_state = node_state.simulateStep(env=env, action=action)
-        if node_state.isDone():
-            if node_state.getReward() > 0:
-                reward = node_state.getReward()
-            else:
-                reward = -5
+        #action = random.choice(env.action_space.n)
+        action = agent.choose_action(node_state.getState())
+        node_state = node_state.simulateStep(env=env, action=action, memory=memory)
+        reward += node_state.getReward()
     return reward
 
 
@@ -42,12 +41,14 @@ class GridWorldState():
         self.is_done = is_done  # if is_done else False0
         self.reward = reward
 
-    def simulateStep(self, env, action):
+    def simulateStep(self, env, action, memory):
         '''
         Simulates action at self.state and returns the next state
         '''
         # next_state, reward, done, info = env.step(action)
         state_desc = env.step(action=action)
+        memory.push(Transition(self.state, [action], [state_desc[1]], state_desc[0], [state_desc[2]]))
+
         newState = GridWorldState(state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
         return newState
 
@@ -62,6 +63,12 @@ class GridWorldState():
         Returns reward of the state
         '''
         return self.reward
+
+    def getState(self):
+        '''
+        Returns reward of the state
+        '''
+        return self.state
 
 
 class Node:
@@ -86,13 +93,14 @@ class Node:
 
 
 class MonteCarloTreeSearch:
-    def __init__(self, agent , env, numiters, explorationParam, random_seed=None, playoutPolicy=randomPolicy):
+    def __init__(self, agent , env, memory, numiters, explorationParam, random_seed=None, playoutPolicy=randomPolicy):
         '''
         self.numiters : Number of MCTS iterations
         self.explorationParam : exploration constant used in computing value of node
         self.playoutPolicy : Policy followed by agent to simulate rollout from leaf node
         self.root : root node of MCTS tree
         '''
+        self.memory = memory
         self.env = env
         self.agent = agent
         self.numiters = numiters
@@ -122,7 +130,8 @@ class MonteCarloTreeSearch:
         #def randomPolicy(model, dqn_agent, device, node_state, env, epsilon):
 
         work_env = deepcopy(self.env)
-        reward = self.playoutPolicy(self.agent, node.state, work_env)
+        reward = self.playoutPolicy(self.agent, node.state, work_env, self.memory)
+        self.agent.learn(self.memory)
 
         self.backpropagate(node, reward)
 
