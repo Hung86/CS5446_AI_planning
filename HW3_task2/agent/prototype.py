@@ -9,11 +9,11 @@ script_path = os.path.dirname(os.path.realpath(__file__))
 model_path = os.path.join(script_path, 'model.pt')
 
 # Hyperparameters --- don't change, RL is very sensitive
-learning_rate = 0.0001
+learning_rate = 0.001
 gamma         = 0.98
 buffer_limit  = 5000
 batch_size    = 32
-max_episodes  = 800
+max_episodes  = 1000
 t_max         = 600
 min_buffer    = 1000
 target_update = 20 # episode(s)
