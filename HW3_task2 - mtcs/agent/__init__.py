@@ -81,9 +81,6 @@ class ExampleAgent(Agent):
         * `action`: `int` representing the index of an action or instance of class `Action`.
                     In this example, we only return a random action
         '''
-
-        print('>>> STEP >>>')
-        print('state:', state)
         '''
         
         # Uncomment to help debugging

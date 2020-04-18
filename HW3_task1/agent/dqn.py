@@ -290,7 +290,7 @@ def train(model_class, env):
                 loss = optimize(model, target, memory, optimizer)
                 losses.append(loss.item())
 
-        # Update target network every once in a while
+        # e target network every once in a while
         if episode % target_update == 0:
             target.load_state_dict(model.state_dict())
 
