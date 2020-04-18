@@ -245,7 +245,7 @@ if __name__ == '__main__':
     #sys.stdout = open("log.txt", "w")
     if args.train:
         model = train(ActorCritic(env, AtariDQN, get_model()), env)
-        save_model(model)
+        model.save_models()
     else:
         model = get_model()
     # test(model, device, env, max_episodes=600)
