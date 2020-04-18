@@ -127,16 +127,16 @@ class ExampleAgent(Agent):
         print('info:', info)
         '''
 
-    def get_model():
-        '''
-        Load `model` from disk. Location is specified in `model_path`.
-        '''
-        script_path = os.path.dirname(os.path.realpath(__file__))
-        model_path = os.path.join(script_path, 'model.pt')
-        model_class, model_state_dict, input_shape, num_actions = torch.load(model_path)
-        model = eval(model_class)(input_shape, num_actions).to(device)
-        model.load_state_dict(model_state_dict)
-        return model
+def get_model():
+    '''
+    Load `model` from disk. Location is specified in `model_path`.
+    '''
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    model_path = os.path.join(script_path, 'model.pt')
+    model_class, model_state_dict, input_shape, num_actions = torch.load(model_path)
+    model = eval(model_class)(input_shape, num_actions).to(device)
+    model.load_state_dict(model_state_dict)
+    return model
 
 def create_agent(test_case_id, *args, **kwargs):
     '''
