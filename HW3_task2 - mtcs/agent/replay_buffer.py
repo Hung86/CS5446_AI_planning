@@ -12,7 +12,6 @@ class ReplayBuffer():
         '''
         # dequeu to limit buffer and auto remove element when full
         self.buffer = collections.deque(maxlen=buffer_limit)
-        print("size", len(self.buffer))
         pass
 
 

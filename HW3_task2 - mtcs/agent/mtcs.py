@@ -23,6 +23,8 @@ def randomPolicy(agent, node_state, env, memory):
         action = agent.choose_action(node_state.getState())
         node_state = node_state.simulateStep(env=env, action=action, memory=memory)
         reward += node_state.getReward()
+        if reward > 0:
+            print("-------simulation reward : ", reward)
     return reward
 
 
