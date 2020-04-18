@@ -38,8 +38,7 @@ ENT_COEF = 1e-2
 
 
 class ActorCritic():
-    def __init__(self, env, network_model, epsilon):
-        self.epsilon = epsilon
+    def __init__(self, env, network_model):
         self.log_probs = None
         self.actor = network_model(env.observation_space.shape, env.action_space.n).to(device)
         self.critic = network_model(env.observation_space.shape, 1).to(device)
