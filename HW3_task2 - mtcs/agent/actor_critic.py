@@ -112,7 +112,7 @@ class ActorCritic():
 
             self.mtcs_net_optimizer.zero_grad()
             theloss.backward()
-            self.mtcs_net_optimize.step()
+            self.mtcs_net_optimizer.step()
             self.mtcs_target.load_state_dict(self.mtcs_net.state_dict())
 
 
