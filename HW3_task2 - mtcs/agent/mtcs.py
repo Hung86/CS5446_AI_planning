@@ -41,13 +41,14 @@ class GridWorldState():
         self.is_done = is_done  # if is_done else False0
         self.reward = reward
 
-    def simulateStep(self, env, action, memory):
+    def simulateStep(self, env, action, memory=None):
         '''
         Simulates action at self.state and returns the next state
         '''
         # next_state, reward, done, info = env.step(action)
         state_desc = env.step(action=action)
-        memory.push(Transition(self.state, [action], [state_desc[1]], state_desc[0], [state_desc[2]]))
+        if memory:
+            memory.push(Transition(self.state, [action], [state_desc[1]], state_desc[0], [state_desc[2]]))
 
         newState = GridWorldState(state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
         return newState
