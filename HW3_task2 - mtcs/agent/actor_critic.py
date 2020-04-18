@@ -93,7 +93,6 @@ class ActorCritic():
         # return output_action
     def learn_mcts(self, memory):
         if len(memory) >= batch_size:
-            print("--learning mcts")
             states, actions, rewards, next_states, dones = memory.sample(batch_size, device)
             indices = np.arange(len(rewards))
             q_state_values = self.mtcs_net(states).gather(1, actions)
