@@ -74,14 +74,12 @@ def train(actor_critic_agent, env):
     print("train : step 1 , t_max : ", t_max)
     memory = ReplayBuffer()
     for episode in range(max_episodes):
-        epsilon = compute_epsilon(episode)
         state = env.reset()
         episode_rewards = 0.0
         #mtcs = MonteCarloTreeSearch(model, device, dqnagent, epsilon,env, 100, 1., 15)
         for t in range(t_max):
-            action = actor_critic_agent.choose_action(state, epsilon)
+            action = actor_critic_agent.choose_action(state)
             next_state, reward, done, info = env.step(action)
-            print("---info:",info)
             #memory.push(Transition(state, [action], [reward], next_state, [done]))
 
             actor_loss, critic_loss = actor_critic_agent.learn(state, reward, next_state, done)
@@ -92,6 +90,7 @@ def train(actor_critic_agent, env):
 
             if done:
                 break
+        print("---episode_rewards:", episode_rewards)
         rewards.append(episode_rewards)
         # Update target network every once in a while
         # # Train the model if memory is sufficient
