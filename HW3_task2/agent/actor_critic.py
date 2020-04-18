@@ -38,10 +38,12 @@ ENT_COEF = 1e-2
 
 
 class ActorCritic():
-    def __init__(self, env, network_model):
+    def __init__(self, env, network_mode, trained_model):
         self.log_probs = None
-        self.actor = network_model(env.observation_space.shape, env.action_space.n).to(device)
+        # self.actor = network_model(env.observation_space.shape, env.action_space.n).to(device)
+        self.actor = trained_model
         self.critic = network_model(env.observation_space.shape, 1).to(device)
+
 
         self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=learning_rate)
         self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=learning_rate)

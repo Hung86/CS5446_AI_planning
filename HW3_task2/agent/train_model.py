@@ -161,7 +161,7 @@ if __name__ == '__main__':
 
     print("Cuda version : ",  torch.cuda.is_available())
     if args.train:
-        model = ActorCritic(env, AtariDQN)
+        model = ActorCritic(env, AtariDQN, get_model())
         train(model, env)
         model.save_models()
 
