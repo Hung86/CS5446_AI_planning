@@ -23,8 +23,6 @@ def randomPolicy(agent, node_state, env, memory):
         action = agent.choose_action_mtcs(node_state.getState())
         node_state = node_state.simulateStep(env=env, action=action, memory=memory)
         reward += node_state.getReward()
-        if reward > 0:
-            print("-------simulation reward : ", reward)
     return reward
 
 
@@ -49,8 +47,8 @@ class GridWorldState():
         '''
         # next_state, reward, done, info = env.step(action)
         state_desc = env.step(action=action)
-        if memory is not None:
-            memory.push(Transition(self.state, [action], [state_desc[1]], state_desc[0], [state_desc[2]]))
+        # if memory is not None:
+        #     memory.push(Transition(self.state, [action], [state_desc[1]], state_desc[0], [state_desc[2]]))
 
         newState = GridWorldState(state=state_desc[0], reward=state_desc[1], is_done=state_desc[2])
         return newState
