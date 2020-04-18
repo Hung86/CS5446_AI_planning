@@ -179,7 +179,9 @@ if __name__ == '__main__':
         rewards = []
         for tc in task['testcases']:
             agent = create_agent(tc['id'])
-            print("[{}]".format(tc['id']), end=' ')
+            # print("[{}]".format(tc['id']), end=' ')
+            #TO DO
+            print("[{}]".format(tc['id']))
             avg_rewards = test(agent, tc['env'], tc['runs'], tc['t_max'])
             rewards.append(avg_rewards)
         point = sum(rewards)/len(rewards)
