@@ -233,6 +233,24 @@ def train(actor_critic_agent, env):
         #             epsilon * 100))
     return actor_critic_agent
 
+def load_models():
+    actor_model_path = os.path.join(script_path, 'actor_model.pt')
+    model_class, model_state_dict, input_shape, num_actions = torch.load(actor_model_path)
+    actor = eval(model_class)(input_shape, num_actions).to(device)
+    actor.load_state_dict(model_state_dict)
+
+    critic_model_path = os.path.join(script_path, 'critic_model.pt')
+    model_class, model_state_dict, input_shape, num_actions = torch.load(critic_model_path)
+    critic_net = eval(model_class)(input_shape, num_actions).to(device)
+    critic_net.load_state_dict(model_state_dict)
+
+    action_critic_model_path = os.path.join(script_path, 'action_critic_model.pt')
+    model_class, model_state_dict, input_shape, num_actions = torch.load(action_critic_model_path)
+    action_critic = eval(model_class)(input_shape, num_actions).to(device)
+    action_critic.load_state_dict(model_state_dict)
+    
+    return actor, critic_net, action_critic
+
 if __name__ == '__main__':
     import argparse
 
@@ -243,7 +261,9 @@ if __name__ == '__main__':
     env = construct_task2_env();
     #sys.stdout = open("log.txt", "w")
     if args.train:
-        model = train(ActorCritic(env, AtariDQN, get_model()), env)
+        actor, critic_net, action_critic = load_models()
+        atari_model = ActorCritic(env, actor, critic_net, action_critic)
+        model = train(atari_model, env)
         model.save_models()
     else:
         model = get_model()

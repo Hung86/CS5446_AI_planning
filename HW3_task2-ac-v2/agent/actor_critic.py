@@ -35,18 +35,32 @@ ENT_COEF = 1e-2
 
 
 class ActorCritic():
-    def __init__(self, env, network_model, existed_model):
+    # def __init__(self, env, network_model, existed_model):
+    #     self.log_probs = None
+    #
+    #     self.actor = existed_model
+    #     self.critic_net = network_model(env.observation_space.shape, 1).to(device)
+    #     self.critic_target = network_model(env.observation_space.shape, 1).to(device)
+    #     self.action_critic = existed_model
+    #
+    #     self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=learning_rate)
+    #     self.critic_optimizer = optim.Adam(self.critic_net.parameters(), lr=learning_rate)
+    #     self.action_critic_optimizer = optim.Adam(self.action_critic.parameters(), lr=learning_rate)
+    def __init__(self, env, actor, critic_net, action_critic):
         self.log_probs = None
-        
-        self.actor = existed_model
-        self.critic_net = network_model(env.observation_space.shape, 1).to(device)
+
+        self.actor = actor
+
+        self.critic_net = critic_net
         self.critic_target = network_model(env.observation_space.shape, 1).to(device)
-        self.action_critic = existed_model
+        self.critic_target.load_state_dict(self.critic_net.state_dict())
+        self.critic_target.eval()
+
+        self.action_critic = action_critic
 
         self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=learning_rate)
         self.critic_optimizer = optim.Adam(self.critic_net.parameters(), lr=learning_rate)
         self.action_critic_optimizer = optim.Adam(self.action_critic.parameters(), lr=learning_rate)
-
 
     def choose_action(self, state):
         if not isinstance(state, torch.FloatTensor):
@@ -148,3 +162,4 @@ class ActorCritic():
         action_critic_model_path = os.path.join(script_path, 'action_critic_model.pt')
         action_critic_data = (self.action_critic.__class__.__name__, self.action_critic.state_dict(), self.action_critic.input_shape, self.action_critic.num_actions)
         torch.save(action_critic_data, action_critic_model_path)
+
