@@ -46,7 +46,7 @@ class ActorCritic():
     #     self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=learning_rate)
     #     self.critic_optimizer = optim.Adam(self.critic_net.parameters(), lr=learning_rate)
     #     self.action_critic_optimizer = optim.Adam(self.action_critic.parameters(), lr=learning_rate)
-    def __init__(self, env, actor, critic_net, action_critic):
+    def __init__(self, env, actor, critic_net, action_critic, network_model):
         self.log_probs = None
 
         self.actor = actor

@@ -262,7 +262,7 @@ if __name__ == '__main__':
     #sys.stdout = open("log.txt", "w")
     if args.train:
         actor, critic_net, action_critic = load_models()
-        atari_model = ActorCritic(env, actor, critic_net, action_critic)
+        atari_model = ActorCritic(env, actor, critic_net, action_critic, AtariDQN)
         model = train(atari_model, env)
         model.save_models()
     else:
