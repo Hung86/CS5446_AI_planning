@@ -15,11 +15,11 @@ import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
 
-from .models import *
-from .env import *
-from .actor_critic import *
-from .replay_buffer import *
-from .prototype import *
+from models import *
+from env import *
+from actor_critic import *
+from replay_buffer import *
+from prototype import *
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
