@@ -101,7 +101,6 @@ class ExampleAgent(Agent):
         print('state:', state)
         '''
         action = self.model.choose_action(state)
-        print('>>> STEP >>> ', action)
         return action
 
     def update(self, *args, **kwargs):
@@ -129,7 +128,8 @@ class ExampleAgent(Agent):
         next_state  = kwargs.get('next_state')
         done        = kwargs.get('done')
         info        = kwargs.get('info')
-        print("reward : ", reward)
+        if done:
+            print("reward : ", reward)
         self.memory.push(Transition(state, [action], [reward], next_state, [done]))
         self.model .learn(self.memory)
         '''
