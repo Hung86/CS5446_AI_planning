@@ -39,7 +39,7 @@ class ExampleAgent(Agent):
         '''
         test_case_id = kwargs.get('test_case_id')
         actor, critic_net, action_critic = load_models()
-        self.model = ActorCritic(env, actor, critic_net, action_critic, AtariDQN)
+        self.model = ActorCritic( actor, critic_net, action_critic, AtariDQN)
         self.memory = ReplayBuffer()
 
         '''
