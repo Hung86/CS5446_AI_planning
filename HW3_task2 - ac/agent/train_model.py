@@ -157,26 +157,14 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     env = construct_task2_env();
-    env1 = construct_task2_env_1();
-
-    env2 = construct_task2_env_2();
-
-    env3 = construct_task2_env_3();
-
-    env4 = construct_task2_env_4();
 
     #sys.stdout = open("log.txt", "w")
 
     print("Cuda version : ",  torch.cuda.is_available())
     if args.train:
         model = ActorCritic(env, AtariDQN)
-        train(model, env1)
-        train(model, env2)
-        train(model, env3)
-        train(model, env4)
         train(model, env)
-
-        # save_model(model)
+        save_model(model)
     else:
         model = get_model()
     # test(model, device, env, max_episodes=600)

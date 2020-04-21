@@ -1,23 +1,35 @@
 try:
     from runner.abstracts import Agent
 except:
-    class Agent(object): pass
+    class Agent(object):
+        pass
 import random
+import torch
+import gym
+import os
+
+from .models import *
+from .env import *
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 class ExampleAgent(Agent):
     '''
     An example agent that just output a random action.
     '''
+
     def __init__(self, *args, **kwargs):
         '''
         [OPTIONAL]
         Initialize the agent with the `test_case_id` (string), which might be important
         if your agent is test case dependent.
-        
-        For example, you might want to load the appropriate neural networks weight 
+
+        For example, you might want to load the appropriate neural networks weight
         in this method.
         '''
         test_case_id = kwargs.get('test_case_id')
+        self.model = get_model()
         '''
         # Uncomment to help debugging
         print('>>> __INIT__ >>>')
@@ -39,25 +51,31 @@ class ExampleAgent(Agent):
 
         This function will be called once before the evaluation.
         '''
-        fast_downward_path  = kwargs.get('fast_downward_path')
-        agent_speed_range   = kwargs.get('agent_speed_range')
-        gamma               = kwargs.get('gamma')
+        fast_downward_path = kwargs.get('fast_downward_path')
+        agent_speed_range = kwargs.get('agent_speed_range')
+        gamma = kwargs.get('gamma')
+
         '''
         # Uncomment to help debugging
         print('>>> INITIALIZE >>>')
         print('fast_downward_path:', fast_downward_path)
         print('agent_speed_range:', agent_speed_range)
         print('gamma:', gamma)
+
+        >>> INITIALIZE >>>
+        fast_downward_path: /fast_downward/
+        agent_speed_range: (-3, -1)
+        gamma: 1
         '''
 
     def step(self, state, *args, **kwargs):
-        ''' 
+        '''
         [REQUIRED]
         Step function of the agent which computes the mapping from state to action.
         As its name suggests, it will be called at every step.
-        
+
         Input:
-        * `state`:  tensor of dimension `[channel, height, width]`, with 
+        * `state`:  tensor of dimension `[channel, height, width]`, with
                     `channel=[cars, agent, finish_position, occupancy_trails]`
 
         Output:
@@ -65,19 +83,26 @@ class ExampleAgent(Agent):
                     In this example, we only return a random action
         '''
         '''
+
         # Uncomment to help debugging
         print('>>> STEP >>>')
         print('state:', state)
         '''
-        return random.randrange(5)
+
+        if not isinstance(state, torch.FloatTensor):
+            state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+
+        output_actions = self.model.forward(state)
+        output_action = torch.argmax(output_actions).item()
+        return output_action
 
     def update(self, *args, **kwargs):
         '''
         [OPTIONAL]
         Update function of the agent. This will be called every step after `env.step` is called.
-        
+
         Input:
-        * `state`: tensor of dimension `[channel, height, width]`, with 
+        * `state`: tensor of dimension `[channel, height, width]`, with
                    `channel=[cars, agent, finish_position, occupancy_trails]`
         * `action` (`int` or `Action`): the executed action (given by the agent through `step` function)
         * `reward` (float): the reward for the `state`
@@ -90,12 +115,12 @@ class ExampleAgent(Agent):
 
         This function might be useful if you want to have policy that is dependant to its past.
         '''
-        state       = kwargs.get('state')
-        action      = kwargs.get('action')
-        reward      = kwargs.get('reward')
-        next_state  = kwargs.get('next_state')
-        done        = kwargs.get('done')
-        info        = kwargs.get('info')
+        state = kwargs.get('state')
+        action = kwargs.get('action')
+        reward = kwargs.get('reward')
+        next_state = kwargs.get('next_state')
+        done = kwargs.get('done')
+        info = kwargs.get('info')
         '''
         # Uncomment to help debugging
         print('>>> UPDATE >>>')
@@ -106,6 +131,18 @@ class ExampleAgent(Agent):
         print('done:', done)
         print('info:', info)
         '''
+
+
+def get_model():
+    '''
+    Load `model` from disk. Location is specified in `model_path`.
+    '''
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    model_path = os.path.join(script_path, 'model.pt')
+    model_class, model_state_dict, input_shape, num_actions = torch.load(model_path)
+    model = eval(model_class)(input_shape, num_actions).to(device)
+    model.load_state_dict(model_state_dict)
+    return model
 
 
 def create_agent(test_case_id, *args, **kwargs):
@@ -123,18 +160,19 @@ if __name__ == '__main__':
 
     FAST_DOWNWARD_PATH = "/fast_downward/"
 
+
     def test(agent, env, runs=1000, t_max=100):
         rewards = []
         for run in range(runs):
             state = env.reset()
-            agent_init = {'fast_downward_path': FAST_DOWNWARD_PATH, 'agent_speed_range': (-3,-1), 'gamma' : 1}
+            agent_init = {'fast_downward_path': FAST_DOWNWARD_PATH, 'agent_speed_range': (-3, -1), 'gamma': 1}
             agent.initialize(**agent_init)
             episode_rewards = 0.0
             for t in range(t_max):
-                action = agent.step(state)   
+                action = agent.step(state)
                 next_state, reward, done, info = env.step(action)
                 full_state = {
-                    'state': state, 'action': action, 'reward': reward, 'next_state': next_state, 
+                    'state': state, 'action': action, 'reward': reward, 'next_state': next_state,
                     'done': done, 'info': info
                 }
                 agent.update(**full_state)
@@ -143,19 +181,22 @@ if __name__ == '__main__':
                 if done:
                     break
             rewards.append(episode_rewards)
-        avg_rewards = sum(rewards)/len(rewards)
+        avg_rewards = sum(rewards) / len(rewards)
         print("{} run(s) avg rewards : {:.1f}".format(runs, avg_rewards))
         return avg_rewards
+
 
     def timed_test(task):
         start_time = time.time()
         rewards = []
         for tc in task['testcases']:
             agent = create_agent(tc['id'])
-            print("[{}]".format(tc['id']), end=' ')
+            # print("[{}]".format(tc['id']), end=' ')
+            # TO DO
+            print("[{}]".format(tc['id']))
             avg_rewards = test(agent, tc['env'], tc['runs'], tc['t_max'])
             rewards.append(avg_rewards)
-        point = sum(rewards)/len(rewards)
+        point = sum(rewards) / len(rewards)
         elapsed_time = time.time() - start_time
 
         print('Point:', point)
@@ -166,12 +207,14 @@ if __name__ == '__main__':
                 print("WARNING: do note that this might not reflect the runtime on the server.")
                 break
 
+
     def get_task():
         tcs = [('task_2_tmax50', 50), ('task_2_tmax40', 40)]
         return {
             'time_limit': 600,
-            'testcases': [{ 'id': tc, 'env': construct_task2_env(), 'runs': 300, 't_max': t_max } for tc, t_max in tcs]
+            'testcases': [{'id': tc, 'env': construct_task2_env(), 'runs': 300, 't_max': t_max} for tc, t_max in tcs]
         }
+
 
     task = get_task()
     timed_test(task)
