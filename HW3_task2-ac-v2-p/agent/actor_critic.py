@@ -95,6 +95,7 @@ class ActorCritic():
 
     def learn(self, memory):
         if len(memory) >= batch_size:
+            print("learn ---")
             states, actions, rewards, next_states, dones = memory.sample(batch_size, device)
     
             

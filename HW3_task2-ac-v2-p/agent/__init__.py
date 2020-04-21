@@ -130,7 +130,7 @@ class ExampleAgent(Agent):
         done        = kwargs.get('done')
         info        = kwargs.get('info')
         print("reward : ", reward)
-        memory.push(Transition(state, [action], [reward], next_state, [done]))
+        self.memory.push(Transition(state, [action], [reward], next_state, [done]))
         self.model .learn(self.memory)
         '''
         # Uncomment to help debugging
