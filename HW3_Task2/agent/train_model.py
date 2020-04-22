@@ -214,13 +214,11 @@ if __name__ == '__main__':
     if args.train & args.model:
         print("train existed model")
         existed_model = get_model()
-        paras = hyper_paras[1]
-        model = train_model(existed_model, running_env, paras)
+        model = train_model(existed_model, running_env, HyperParameter(hyper_paras[1]))
         save_model(model)
     if args.train:
         print("train new model")
-        paras = hyper_paras[0]
-        model = train(AtariDQN, running_env, paras)
+        model = train(AtariDQN, running_env, HyperParameter(hyper_paras[0]))
         save_model(model)
     else:
         model = get_model()

@@ -51,3 +51,19 @@ def save_model(model):
     '''
     data = (model.__class__.__name__, model.state_dict(), model.input_shape, model.num_actions)
     torch.save(data, model_path)
+
+class HyperParameter():
+    def __init__(self, parameters):
+        self.learning_rate = parameters["learning_rate"]
+        self.gamma = parameters["gamma"]
+        self.buffer_limit = parameters["buffer_limit"]
+        self.batch_size = parameters["batch_size"]
+        self.max_episodes = parameters["max_episodes"]
+        self.t_max = parameters["t_max"]
+        self.min_buffer = parameters["min_buffer"]
+        self.target_update = parameters["target_update"]
+        self.train_steps = parameters["train_steps"]
+        self.max_epsilon = parameters["max_epsilon"]
+        self.min_epsilon = parameters["min_epsilon"]
+        self.epsilon_decay = parameters["epsilon_decay"]
+        self.print_interval = parameters["print_interval"]
