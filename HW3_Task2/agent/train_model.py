@@ -96,7 +96,7 @@ def train(model_class, running_env, paras):
     rewards = []
     losses = []
     optimizer = optim.Adam(model.parameters(), lr=paras.learning_rate)
-    print("train : step 1 , t_max : ", t_max)
+    print("train : max_episodes : ", paras.max_episodes)
 
     for episode in range(paras.max_episodes):
         epsilon = compute_epsilon(episode, paras)
@@ -158,7 +158,7 @@ def train_model(old_model, running_env, paras):
     rewards = []
     losses = []
     optimizer = optim.Adam(model.parameters(), lr=paras.learning_rate)
-    print("train : step 1 , t_max : ", t_max)
+    print("train : max_episodes : ", paras.max_episodes)
 
     for episode in range(paras.max_episodes):
         epsilon = compute_epsilon(episode, paras)
