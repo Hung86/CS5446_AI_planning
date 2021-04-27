@@ -1,3 +1,7 @@
+'''
+Name : Tran Khanh Hung (A0212253W)
+Name : Lim Jia Xian Clarence (A0212209U)
+'''
 import torch
 import torch.autograd as autograd
 import torch.nn as nn

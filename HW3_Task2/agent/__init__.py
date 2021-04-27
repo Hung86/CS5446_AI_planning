@@ -1,8 +1,17 @@
+'''
+Name : Tran Khanh Hung (A0212253W)
+Name : Lim Jia Xian Clarence (A0212209U)
+'''
 try:
     from runner.abstracts import Agent
 except:
     class Agent(object): pass
 import random
+import torch
+
+from .models import *
+from .env import *
+from .prototype import *
 
 class ExampleAgent(Agent):
     '''
@@ -18,6 +27,8 @@ class ExampleAgent(Agent):
         in this method.
         '''
         test_case_id = kwargs.get('test_case_id')
+        self.model = get_model()
+
         '''
         # Uncomment to help debugging
         print('>>> __INIT__ >>>')
@@ -69,7 +80,12 @@ class ExampleAgent(Agent):
         print('>>> STEP >>>')
         print('state:', state)
         '''
-        return random.randrange(5)
+        if not isinstance(state, torch.FloatTensor):
+            state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+
+        output_actions = self.model.forward(state)
+        output_action = torch.argmax(output_actions).item()
+        return output_action
 
     def update(self, *args, **kwargs):
         '''

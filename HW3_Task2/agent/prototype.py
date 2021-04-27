@@ -1,7 +1,11 @@
+'''
+Name : Tran Khanh Hung (A0212253W)
+Name : Lim Jia Xian Clarence (A0212209U)
+'''
 import collections
 import torch
 import os
-
+from .models import *
 
 # # Hyperparameters --- don't change, RL is very sensitive
 # learning_rate = 1e-4
@@ -24,9 +28,14 @@ hyper_paras =[
     {"learning_rate" : 0.001 , "gamma" : 0.98 , "buffer_limit"  : 100000,
     "batch_size" : 64, "max_episodes" : 50000, "t_max" : 600, "min_buffer"    : 1000,
     "target_update" : 20, "train_steps"   : 10, "max_epsilon"   : 1.0, "min_epsilon"   : 0.01,
-    "epsilon_decay" : 500, "print_interval" : 20},     {"learning_rate" : 0.0001 , "gamma" : 0.98 , "buffer_limit"  : 100000,
+    "epsilon_decay" : 500, "print_interval" : 20},
+    {"learning_rate" : 0.0001 , "gamma" : 0.98 , "buffer_limit"  : 100000,
+    "batch_size" : 64, "max_episodes" : 10000, "t_max" : 600, "min_buffer"    : 1000,
+    "target_update" : 20, "train_steps"   : 10, "max_epsilon"   : 0.01, "min_epsilon"   : 0.01,
+    "epsilon_decay" : 500, "print_interval" : 20},
+    {"learning_rate" : 0.00001 , "gamma" : 0.98 , "buffer_limit"  : 100000,
     "batch_size" : 64, "max_episodes" : 2000, "t_max" : 600, "min_buffer"    : 1000,
-    "target_update" : 20, "train_steps"   : 10, "max_epsilon"   : 1.0, "min_epsilon"   : 0.01,
+    "target_update" : 20, "train_steps"   : 10, "max_epsilon"   : 0.01, "min_epsilon"   : 0.01,
     "epsilon_decay" : 500, "print_interval" : 20}
      ]
 

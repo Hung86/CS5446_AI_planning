@@ -1,8 +1,12 @@
+'''
+Name : Tran Khanh Hung (A0212253W)
+Name : Lim Jia Xian Clarence (A0212209U)
+'''
 import torch
 import collections
 import random
 
-from prototype import *
+from .prototype import *
 
 class ReplayBuffer():
     def __init__(self, buffer_limit=10000):

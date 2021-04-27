@@ -1,12 +1,16 @@
+'''
+Name : Tran Khanh Hung (A0212253W)
+Name : Lim Jia Xian Clarence (A0212209U)
+'''
 # from .models import *
 # from .dqn_agent import *
 # from .replay_buffer import *
 # from .dqn_env import *
-from models import *
-from dqn_agent import *
-from replay_buffer import *
-from env import *
-from prototype import *
+from .models import *
+from .dqn_agent import *
+from .replay_buffer import *
+from .env import *
+from .prototype import *
 
 import gym
 import gym_grid_driving
